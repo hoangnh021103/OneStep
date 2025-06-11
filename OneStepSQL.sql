@@ -28,7 +28,6 @@ CREATE TABLE ChiTietSanPham (
     chat_lieu_id INT,
     mau_sac_id INT,
     hang_san_xuat_id INT,
-    de_giay_id INT,
     duong_dan_anh NVARCHAR(200),
     gia_tien FLOAT,
     so_luong_ton INT,
