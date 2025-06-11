@@ -47,13 +47,13 @@ VALUES
 (N'Giày Trail Running Terra', N'TRT004', N'Giày chạy địa hình, bền bỉ, chống trượt', N'/images/terra.jpg', 1, '2025-06-05', N'admin', N'admin', 0),
 (N'Giày Lười Casual Easy', N'CE005', N'Giày lười nam, tiện lợi, phù hợp đi chơi và làm việc', N'/images/casual.jpg', 1, '2025-06-05', N'admin', N'admin', 0);
 
-INSERT INTO ChiTietSanPham (thuong_hieu_id, kieu_dang_id, kich_co_id, san_pham_id, chat_lieu_id, mau_sac_id, hang_san_xuat_id, de_giay_id, duong_dan_anh, gia_tien, so_luong_ton, trang_thai, tien_giam_gia, da_xoa, ngay_cap_nhat, nguoi_tao, nguoi_cap_nhat)
+INSERT INTO ChiTietSanPham (thuong_hieu_id, kieu_dang_id, kich_co_id, san_pham_id, chat_lieu_id, mau_sac_id, hang_san_xuat_id, duong_dan_anh, gia_tien, so_luong_ton, trang_thai, tien_giam_gia, da_xoa, ngay_cap_nhat, nguoi_tao, nguoi_cap_nhat)
 VALUES
-(1, 1, 42, 1, 3, 1, 2, 1, N'/images/details/airmax-1.jpg', 2500000, 100, 1, 200000, 0, '2025-06-05', N'admin', N'admin'),
-(2, 2, 40, 2, 2, 2, 1, 2, N'/images/details/zoomx-1.jpg', 2800000, 50, 1, 300000, 0, '2025-06-05', N'admin', N'admin'),
-(3, 3, 41, 3, 1, 3, 3, 3, N'/images/details/classic-1.jpg', 1800000, 150, 1, 100000, 0, '2025-06-05', N'admin', N'admin'),
-(4, 4, 39, 4, 4, 4, 4, 4, N'/images/details/terra-1.jpg', 3200000, 30, 1, 400000, 0, '2025-06-05', N'admin', N'admin'),
-(5, 5, 43, 5, 5, 5, 5, 5, N'/images/details/casual-1.jpg', 1500000, 80, 1, 0, 0, '2025-06-05', N'admin', N'admin');
+(1, 1, 42, 1, 3, 1, 2, N'/images/details/airmax-1.jpg', 2500000, 100, 1, 200000, 0, '2025-06-05', N'admin', N'admin'),
+(2, 2, 40, 2, 2, 2, 1, N'/images/details/zoomx-1.jpg', 2800000, 50, 1, 300000, 0, '2025-06-05', N'admin', N'admin'),
+(3, 3, 41, 3, 1, 3, 3, N'/images/details/classic-1.jpg', 1800000, 150, 1, 100000, 0, '2025-06-05', N'admin', N'admin'),
+(4, 4, 39, 4, 4, 4, 4, N'/images/details/terra-1.jpg', 3200000, 30, 1, 400000, 0, '2025-06-05', N'admin', N'admin'),
+(5, 5, 43, 5, 5, 5, 5, N'/images/details/casual-1.jpg', 1500000, 80, 1, 0, 0, '2025-06-05', N'admin', N'admin');
 
 SELECT * FROM dbo.SanPham;
 
