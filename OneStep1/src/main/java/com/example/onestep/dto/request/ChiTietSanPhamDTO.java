@@ -37,8 +37,6 @@ public class ChiTietSanPhamDTO {
     @NotNull(message = "Hãng sản xuất không được để trống")
     private Integer hangSanXuatId;
 
-    @NotNull(message = "Đế giày không được để trống")
-    private Integer deGiayId;
 
     @Size(max = 200, message = "Đường dẫn ảnh tối đa 200 ký tự")
     private String duongDanAnh;

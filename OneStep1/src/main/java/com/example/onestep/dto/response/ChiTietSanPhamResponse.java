@@ -28,7 +28,7 @@ public class ChiTietSanPhamResponse {
 
     private Integer hangSanXuatId;
 
-    private Integer deGiayId;
+
 
     private String duongDanAnh;
 

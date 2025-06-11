@@ -75,11 +75,9 @@ public class ChiTietSanPhamServiceImp implements ChiTietSanPhamService {
             SanPham sanPham = sanPhamRepository.findById(req.getSanPhamId())
                     .orElseThrow(() -> new RuntimeException("Không tìm thấy sản phẩm với id = " + req.getSanPhamId()));
             ctsp.setSanPham(sanPham);
-
             ctsp.setChatLieuId(req.getChatLieuId());
             ctsp.setMauSacId(req.getMauSacId());
             ctsp.setHangSanXuatId(req.getHangSanXuatId());
-            ctsp.setDeGiayId(req.getDeGiayId());
             ctsp.setDuongDanAnh(req.getDuongDanAnh());
             ctsp.setGiaTien(req.getGiaTien());
             ctsp.setSoLuongTon(req.getSoLuongTon());

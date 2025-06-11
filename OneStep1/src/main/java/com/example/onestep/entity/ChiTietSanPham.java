@@ -40,10 +40,6 @@ public class ChiTietSanPham {
 
     @Column(name = "hang_san_xuat_id")
     private Integer hangSanXuatId;
-
-    @Column(name = "de_giay_id")
-    private Integer deGiayId;
-
     @Column(name = "duong_dan_anh")
     private String duongDanAnh;
 
