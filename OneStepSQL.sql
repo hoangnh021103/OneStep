@@ -1,10 +1,6 @@
 ﻿
 create database BanGiay
 use BanGiay
-
-CREATE DATABASE BanGiay;
-USE BanGiay;
-
 CREATE TABLE SanPham (
     ma_san_pham INT IDENTITY(1,1) PRIMARY KEY,
     ten_san_pham NVARCHAR(255) NOT NULL,

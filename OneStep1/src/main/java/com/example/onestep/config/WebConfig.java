@@ -15,7 +15,7 @@ public class WebConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**") // cho phép tất cả các API
-                        .allowedOrigins("") // địa chỉ FE (Cái HTTP nhé dán vào đây)
+                        .allowedOrigins("http://localhost:5173") // địa chỉ FE (Cái HTTP nhé dán vào đây)
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*")
                         .allowCredentials(true);
