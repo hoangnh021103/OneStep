@@ -19,51 +19,58 @@ public class ChiTietSanPham {
     @Column(name = "ma_chi_tiet")
     private Integer maChiTiet;
 
-    @Column(name = "thuong_hieu_id")
-    private Integer thuongHieuId;
-
-    @Column(name = "kieu_dang_id")
-    private Integer kieuDangId;
-
-    @Column(name = "kich_co_id")
-    private Integer kichCoId;
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "thuong_hieu_id", referencedColumnName = "id")
+//    private ThuongHieu thuongHieu;
+//
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "kieu_dang_id", referencedColumnName = "id")
+//    private KieuDang kieuDang;
+//
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "kich_co_id", referencedColumnName = "id")
+//    private KichCo kichCo;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "san_pham_id", referencedColumnName = "ma_san_pham")
     private SanPham sanPham;
 
-    @Column(name = "chat_lieu_id")
-    private Integer chatLieuId;
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "chat_lieu_id", referencedColumnName = "id")
+//    private ChatLieu chatLieu;
+//
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "mau_sac_id", referencedColumnName = "id")
+//    private MauSac mauSac;
+//
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "hang_san_xuat_id", referencedColumnName = "id")
+//    private ThuongHieu hangSanXuat; // Dùng lại entity ThuongHieu
 
-    @Column(name = "mau_sac_id")
-    private Integer mauSacId;
-
-    @Column(name = "hang_san_xuat_id")
-    private Integer hangSanXuatId;
     @Column(name = "duong_dan_anh")
     private String duongDanAnh;
 
-    @Column(name = "gia_tien")
+    @Column(name = "gia_tien", nullable = false)
     private Float giaTien;
 
-    @Column(name = "so_luong_ton")
+    @Column(name = "so_luong_ton", nullable = false)
     private Integer soLuongTon;
 
-    @Column(name = "trang_thai")
+    @Column(name = "trang_thai", nullable = false)
     private Integer trangThai;
 
-    @Column(name = "tien_giam_gia")
-    private Float tienGiamGia;
+    @Column(name = "tien_giam_gia", nullable = false)
+    private Float tienGiamGia = 0f;
 
-    @Column(name = "da_xoa")
-    private Integer daXoa;
+    @Column(name = "da_xoa", nullable = false)
+    private Integer daXoa = 0;
 
-    @Column(name = "ngay_cap_nhat")
-    private LocalDate ngayCapNhat;
+    @Column(name = "ngay_cap_nhat", nullable = false)
+    private LocalDate ngayCapNhat = LocalDate.now();
 
-    @Column(name = "nguoi_tao")
+    @Column(name = "nguoi_tao", nullable = false)
     private String nguoiTao;
 
-    @Column(name = "nguoi_cap_nhat")
+    @Column(name = "nguoi_cap_nhat", nullable = false)
     private String nguoiCapNhat;
 }

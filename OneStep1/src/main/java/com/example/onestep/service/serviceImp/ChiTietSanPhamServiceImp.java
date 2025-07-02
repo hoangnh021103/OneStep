@@ -2,10 +2,8 @@ package com.example.onestep.service.serviceImp;
 
 import com.example.onestep.dto.request.ChiTietSanPhamDTO;
 import com.example.onestep.dto.response.ChiTietSanPhamResponse;
-import com.example.onestep.entity.ChiTietSanPham;
-import com.example.onestep.entity.SanPham;
-import com.example.onestep.repository.ChiTietSanPhamRepository;
-import com.example.onestep.repository.SanPhamRepository;
+import com.example.onestep.entity.*;
+import com.example.onestep.repository.*;
 import com.example.onestep.service.ChiTietSanPhamService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +26,21 @@ public class ChiTietSanPhamServiceImp implements ChiTietSanPhamService {
     @Autowired
     private SanPhamRepository sanPhamRepository;
 
+    @Autowired
+    private ThuongHieuRepository thuongHieuRepository;
+
+    @Autowired
+    private KieuDangRepository kieuDangRepository;
+
+    @Autowired
+    private KichCoRepository kichCoRepository;
+
+    @Autowired
+    private ChatLieuRepository chatLieuRepository;
+
+    @Autowired
+    private MauSacRepository mauSacRepository;
+
     @Override
     public List<ChiTietSanPhamResponse> getAll() {
         List<ChiTietSanPham> list = chiTietSanPhamRepository.findAll();
@@ -49,17 +62,30 @@ public class ChiTietSanPhamServiceImp implements ChiTietSanPhamService {
     public ChiTietSanPhamResponse add(ChiTietSanPhamDTO req) {
         ChiTietSanPham entity = modelMapper.map(req, ChiTietSanPham.class);
 
-        // Lấy entity SanPham theo id rồi set
-        SanPham sanPham = sanPhamRepository.findById(req.getSanPhamId())
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy sản phẩm với id = " + req.getSanPhamId()));
-        entity.setSanPham(sanPham);
+        entity.setSanPham(sanPhamRepository.findById(req.getSanPhamId())
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy sản phẩm")));
 
-        if (entity.getDaXoa() == null) {
-            entity.setDaXoa(0);
-        }
-        if (entity.getNgayCapNhat() == null) {
-            entity.setNgayCapNhat(java.time.LocalDate.now());
-        }
+        entity.setThuongHieu(thuongHieuRepository.findById(req.getThuongHieuId())
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy thương hiệu")));
+
+        entity.setKieuDang(kieuDangRepository.findById(req.getKieuDangId())
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy kiểu dáng")));
+
+        entity.setKichCo(kichCoRepository.findById(req.getKichCoId())
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy kích cỡ")));
+
+        entity.setChatLieu(chatLieuRepository.findById(req.getChatLieuId())
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy chất liệu")));
+
+        entity.setMauSac(mauSacRepository.findById(req.getMauSacId())
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy màu sắc")));
+
+        entity.setHangSanXuat(thuongHieuRepository.findById(req.getHangSanXuatId())
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy hãng sản xuất")));
+
+        if (entity.getDaXoa() == null) entity.setDaXoa(0);
+        if (entity.getNgayCapNhat() == null) entity.setNgayCapNhat(java.time.LocalDate.now());
+
         ChiTietSanPham saved = chiTietSanPhamRepository.save(entity);
         return modelMapper.map(saved, ChiTietSanPhamResponse.class);
     }
@@ -67,17 +93,28 @@ public class ChiTietSanPhamServiceImp implements ChiTietSanPhamService {
     @Override
     public Optional<ChiTietSanPhamResponse> update(Integer id, ChiTietSanPhamDTO req) {
         return chiTietSanPhamRepository.findById(id).map(ctsp -> {
-            ctsp.setThuongHieuId(req.getThuongHieuId());
-            ctsp.setKieuDangId(req.getKieuDangId());
-            ctsp.setKichCoId(req.getKichCoId());
 
-            // Lấy entity SanPham theo id rồi set
-            SanPham sanPham = sanPhamRepository.findById(req.getSanPhamId())
-                    .orElseThrow(() -> new RuntimeException("Không tìm thấy sản phẩm với id = " + req.getSanPhamId()));
-            ctsp.setSanPham(sanPham);
-            ctsp.setChatLieuId(req.getChatLieuId());
-            ctsp.setMauSacId(req.getMauSacId());
-            ctsp.setHangSanXuatId(req.getHangSanXuatId());
+            ctsp.setSanPham(sanPhamRepository.findById(req.getSanPhamId())
+                    .orElseThrow(() -> new RuntimeException("Không tìm thấy sản phẩm")));
+
+            ctsp.setThuongHieu(thuongHieuRepository.findById(req.getThuongHieuId())
+                    .orElseThrow(() -> new RuntimeException("Không tìm thấy thương hiệu")));
+
+            ctsp.setKieuDang(kieuDangRepository.findById(req.getKieuDangId())
+                    .orElseThrow(() -> new RuntimeException("Không tìm thấy kiểu dáng")));
+
+            ctsp.setKichCo(kichCoRepository.findById(req.getKichCoId())
+                    .orElseThrow(() -> new RuntimeException("Không tìm thấy kích cỡ")));
+
+            ctsp.setChatLieu(chatLieuRepository.findById(req.getChatLieuId())
+                    .orElseThrow(() -> new RuntimeException("Không tìm thấy chất liệu")));
+
+            ctsp.setMauSac(mauSacRepository.findById(req.getMauSacId())
+                    .orElseThrow(() -> new RuntimeException("Không tìm thấy màu sắc")));
+
+            ctsp.setHangSanXuat(thuongHieuRepository.findById(req.getHangSanXuatId())
+                    .orElseThrow(() -> new RuntimeException("Không tìm thấy hãng sản xuất")));
+
             ctsp.setDuongDanAnh(req.getDuongDanAnh());
             ctsp.setGiaTien(req.getGiaTien());
             ctsp.setSoLuongTon(req.getSoLuongTon());
@@ -102,10 +139,12 @@ public class ChiTietSanPhamServiceImp implements ChiTietSanPhamService {
     public List<ChiTietSanPhamResponse> search(String keyword, Integer trangThaiMin, Integer trangThaiMax) {
         List<ChiTietSanPham> list = chiTietSanPhamRepository.findAll().stream()
                 .filter(ctsp -> (keyword == null ||
-                        (ctsp.getDuongDanAnh() != null && ctsp.getDuongDanAnh().toLowerCase().contains(keyword.toLowerCase()))))
+                        (ctsp.getDuongDanAnh() != null &&
+                                ctsp.getDuongDanAnh().toLowerCase().contains(keyword.toLowerCase()))))
                 .filter(ctsp -> (trangThaiMin == null || ctsp.getTrangThai() >= trangThaiMin))
                 .filter(ctsp -> (trangThaiMax == null || ctsp.getTrangThai() <= trangThaiMax))
                 .collect(Collectors.toList());
+
         return list.stream()
                 .map(ctsp -> modelMapper.map(ctsp, ChiTietSanPhamResponse.class))
                 .collect(Collectors.toList());

@@ -28,8 +28,6 @@ public class ChiTietSanPhamResponse {
 
     private Integer hangSanXuatId;
 
-
-
     private String duongDanAnh;
 
     private Float giaTien;
