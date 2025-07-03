@@ -19,33 +19,33 @@ public class ChiTietSanPham {
     @Column(name = "ma_chi_tiet")
     private Integer maChiTiet;
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "thuong_hieu_id", referencedColumnName = "id")
-//    private ThuongHieu thuongHieu;
-//
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "kieu_dang_id", referencedColumnName = "id")
-//    private KieuDang kieuDang;
-//
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "kich_co_id", referencedColumnName = "id")
-//    private KichCo kichCo;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "thuong_hieu_id", referencedColumnName = "id")
+    private ThuongHieu thuongHieu;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "kieu_dang_id", referencedColumnName = "id")
+    private KieuDang kieuDang;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "kich_co_id", referencedColumnName = "id")
+    private KichCo kichCo;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "san_pham_id", referencedColumnName = "ma_san_pham")
     private SanPham sanPham;
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "chat_lieu_id", referencedColumnName = "id")
-//    private ChatLieu chatLieu;
-//
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "mau_sac_id", referencedColumnName = "id")
-//    private MauSac mauSac;
-//
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "hang_san_xuat_id", referencedColumnName = "id")
-//    private ThuongHieu hangSanXuat; // Dùng lại entity ThuongHieu
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "chat_lieu_id", referencedColumnName = "id")
+    private ChatLieu chatLieu;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "mau_sac_id", referencedColumnName = "id")
+    private MauSac mauSac;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "hang_san_xuat_id", referencedColumnName = "id")
+    private ThuongHieu hangSanXuat; // Dùng lại entity ThuongHieu
 
     @Column(name = "duong_dan_anh")
     private String duongDanAnh;
@@ -60,10 +60,10 @@ public class ChiTietSanPham {
     private Integer trangThai;
 
     @Column(name = "tien_giam_gia", nullable = false)
-    private Float tienGiamGia = 0f;
+    private Float tienGiamGia ;
 
     @Column(name = "da_xoa", nullable = false)
-    private Integer daXoa = 0;
+    private Integer daXoa ;
 
     @Column(name = "ngay_cap_nhat", nullable = false)
     private LocalDate ngayCapNhat = LocalDate.now();

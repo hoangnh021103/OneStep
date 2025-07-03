@@ -33,32 +33,4 @@ public class ChiTietSanPhamController {
         Page<ChiTietSanPhamResponse> paged = chiTietSanPhamService.phanTrang(pageable);
         return ResponseEntity.ok(paged);
     }
-
-    @PostMapping("/add")
-    public ResponseEntity<ChiTietSanPhamResponse> add(@Valid @RequestBody ChiTietSanPhamDTO req) {
-        ChiTietSanPhamResponse saved = chiTietSanPhamService.add(req);
-        return ResponseEntity.ok(saved);
-    }
-
-    @PutMapping("/update/{id}")
-    public ResponseEntity<ChiTietSanPhamResponse> update(@PathVariable Integer id, @Valid @RequestBody ChiTietSanPhamDTO req) {
-        Optional<ChiTietSanPhamResponse> updated = chiTietSanPhamService.update(id, req);
-        return updated.map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
-    }
-
-    @DeleteMapping("/xoa/{id}")
-    public ResponseEntity<String> delete(@PathVariable Integer id) {
-        chiTietSanPhamService.delete(id);
-        return ResponseEntity.ok("Xóa thành công");
-    }
-
-    @GetMapping("/tim-kiem")
-    public ResponseEntity<List<ChiTietSanPhamResponse>> search(
-            @RequestParam(required = false) String keyword,
-            @RequestParam(required = false) Integer trangThaiMin,
-            @RequestParam(required = false) Integer trangThaiMax) {
-        List<ChiTietSanPhamResponse> result = chiTietSanPhamService.search(keyword, trangThaiMin, trangThaiMax);
-        return ResponseEntity.ok(result);
-    }
 }

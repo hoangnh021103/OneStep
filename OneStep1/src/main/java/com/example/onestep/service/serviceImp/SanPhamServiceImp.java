@@ -42,45 +42,4 @@ public class SanPhamServiceImp implements SanPhamService {
                 .collect(Collectors.toList());
         return new PageImpl<>(dtoList, pageable, page.getTotalElements());
     }
-
-    @Override
-    public SanPhamResponse add(SanPhamDTO req) {
-        SanPham entity = modelMapper.map(req, SanPham.class);
-        entity.setDaXoa(0);
-        entity.setNgayCapNhat(LocalDate.now());
-        SanPham saved = sanPhamRepository.save(entity);
-        return modelMapper.map(saved, SanPhamResponse.class);
-    }
-
-    @Override
-    public Optional<SanPhamResponse> update(Integer id, SanPhamDTO req) {
-        return sanPhamRepository.findById(id).map(sp -> {
-            sp.setTenSanPham(req.getTenSanPham());
-            sp.setMaCode(req.getMaCode());
-            sp.setMoTa(req.getMoTa());
-            sp.setDuongDanAnh(req.getDuongDanAnh());
-            sp.setTrangThai(req.getTrangThai());
-            sp.setNguoiCapNhat(req.getNguoiCapNhat());
-            sp.setNgayCapNhat(LocalDate.now());
-            SanPham updated = sanPhamRepository.save(sp);
-            return modelMapper.map(updated, SanPhamResponse.class);
-        });
-    }
-
-    @Override
-    public void delete(Integer id) {
-        sanPhamRepository.deleteById(id);
-    }
-
-    @Override
-    public List<SanPhamResponse> search(String keyword, Integer trangThaiMin, Integer trangThaiMax) {
-        List<SanPham> list = sanPhamRepository.findAll().stream()
-                .filter(sp -> (keyword == null || sp.getTenSanPham().toLowerCase().contains(keyword.toLowerCase())))
-                .filter(sp -> (trangThaiMin == null || sp.getTrangThai() >= trangThaiMin))
-                .filter(sp -> (trangThaiMax == null || sp.getTrangThai() <= trangThaiMax))
-                .collect(Collectors.toList());
-        return list.stream()
-                .map(sp -> modelMapper.map(sp, SanPhamResponse.class))
-                .collect(Collectors.toList());
-    }
 }

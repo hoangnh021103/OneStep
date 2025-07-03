@@ -34,31 +34,4 @@ public class SanPhamController {
         return ResponseEntity.ok(paged);
     }
 
-    @PostMapping("/add")
-    public ResponseEntity<SanPhamResponse> add(@Valid @RequestBody SanPhamDTO req) {
-        SanPhamResponse saved = sanPhamService.add(req);
-        return ResponseEntity.ok(saved);
-    }
-
-    @PutMapping("/update/{id}")
-    public ResponseEntity<SanPhamResponse> update(@PathVariable Integer id, @Valid @RequestBody SanPhamDTO req) {
-        Optional<SanPhamResponse> updated = sanPhamService.update(id, req);
-        return updated.map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
-    }
-
-    @DeleteMapping("/xoa/{id}")
-    public ResponseEntity<String> delete(@PathVariable Integer id) {
-        sanPhamService.delete(id);
-        return ResponseEntity.ok("Xóa thành công");
-    }
-
-    @GetMapping("/tim-kiem")
-    public ResponseEntity<List<SanPhamResponse>> search(
-            @RequestParam(required = false) String keyword,
-            @RequestParam(required = false) Integer trangThaiMin,
-            @RequestParam(required = false) Integer trangThaiMax) {
-        List<SanPhamResponse> result = sanPhamService.search(keyword, trangThaiMin, trangThaiMax);
-        return ResponseEntity.ok(result);
-    }
 }

@@ -14,13 +14,4 @@ public interface SanPhamService {
 
     Page<SanPhamResponse> phanTrang(Pageable pageable);
 
-    SanPhamResponse add(SanPhamDTO req);
-
-    Optional<SanPhamResponse> update(Integer id, SanPhamDTO req);
-
-    void delete(Integer id);
-
-    List<SanPhamResponse> search(String keyword, Integer trangThaiMin, Integer trangThaiMax);
-
-
 }

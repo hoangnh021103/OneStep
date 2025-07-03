@@ -14,11 +14,4 @@ public interface ChiTietSanPhamService {
 
     Page<ChiTietSanPhamResponse> phanTrang(Pageable pageable);
 
-    ChiTietSanPhamResponse add(ChiTietSanPhamDTO req);
-
-    Optional<ChiTietSanPhamResponse> update(Integer id, ChiTietSanPhamDTO req);
-
-    void delete(Integer id);
-
-    List<ChiTietSanPhamResponse> search(String keyword, Integer trangThaiMin, Integer trangThaiMax);
 }
