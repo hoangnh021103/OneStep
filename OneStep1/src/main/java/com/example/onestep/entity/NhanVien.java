@@ -40,9 +40,9 @@ public class NhanVien {
     @Column(name = "url_anh", columnDefinition = "TEXT")
     private String urlAnh;
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "vai_tro_id")
-//    private VaiTro vaiTro;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "vai_tro_id")
+    private VaiTro vaiTro;
 
     @Column(name = "ngay_tao")
     private LocalDate ngayTao;
