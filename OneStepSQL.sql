@@ -12,79 +12,72 @@ GO
 -- Bảng ThuongHieu
 CREATE TABLE ThuongHieu (
     id INT IDENTITY(1,1) PRIMARY KEY,
-    ten NVARCHAR(255) UNIQUE NOT NULL,
+    ten NVARCHAR(255) NOT NULL,
     trang_thai INT,
     ngay_cap_nhat DATE,
     nguoi_tao NVARCHAR(255),
     nguoi_cap_nhat NVARCHAR(255),
     da_xoa TINYINT
 );
-GO
 
 -- Bảng KieuDang
 CREATE TABLE KieuDang (
     id INT IDENTITY(1,1) PRIMARY KEY,
-    ten NVARCHAR(255) UNIQUE NOT NULL,
+    ten NVARCHAR(255) NOT NULL,
     trang_thai INT,
     ngay_cap_nhat DATE,
     nguoi_tao NVARCHAR(255),
     nguoi_cap_nhat NVARCHAR(255),
     da_xoa TINYINT
 );
-GO
-
 -- Bảng KichCo
 CREATE TABLE KichCo (
     id INT IDENTITY(1,1) PRIMARY KEY,
-    ten NVARCHAR(255) UNIQUE NOT NULL,
+    ten NVARCHAR(255) NOT NULL,
     trang_thai INT,
     ngay_cap_nhat DATE,
     nguoi_tao NVARCHAR(255),
     nguoi_cap_nhat NVARCHAR(255),
     da_xoa TINYINT
 );
-GO
 
 -- Bảng ChatLieu
 CREATE TABLE ChatLieu (
     id INT IDENTITY(1,1) PRIMARY KEY,
-    ten NVARCHAR(255) UNIQUE NOT NULL,
+    ten NVARCHAR(255) NOT NULL,
     trang_thai INT,
     ngay_cap_nhat DATE,
     nguoi_tao NVARCHAR(255),
     nguoi_cap_nhat NVARCHAR(255),
     da_xoa TINYINT
 );
-GO
 
 -- Bảng MauSac
 CREATE TABLE MauSac (
     id INT IDENTITY(1,1) PRIMARY KEY,
-    ten NVARCHAR(255) UNIQUE NOT NULL,
-    ma NVARCHAR(10) UNIQUE NOT NULL,
+    ten NVARCHAR(255) NOT NULL,
+    ma NVARCHAR(10) NOT NULL,
     trang_thai INT,
     ngay_cap_nhat DATE,
     nguoi_tao NVARCHAR(255),
     nguoi_cap_nhat NVARCHAR(255),
     da_xoa TINYINT
 );
-GO
 
 -- Bảng PhuongThucThanhToan
 CREATE TABLE PhuongThucThanhToan (
     id INT IDENTITY(1,1) PRIMARY KEY,
-    ten NVARCHAR(255) UNIQUE NOT NULL,
+    ten NVARCHAR(255) NOT NULL,
     ngay_cap_nhat DATE,
     nguoi_tao NVARCHAR(255),
     nguoi_cap_nhat NVARCHAR(255),
     da_xoa TINYINT
 );
-GO
 
 -- Bảng Voucher
 CREATE TABLE Voucher (
     id INT IDENTITY(1,1) PRIMARY KEY,
-    ma NVARCHAR(10) UNIQUE NOT NULL,
+    ma NVARCHAR(10) NOT NULL,
     ten NVARCHAR(255),
     loai INT,
     gia_tri FLOAT,
@@ -98,20 +91,16 @@ CREATE TABLE Voucher (
     nguoi_cap_nhat NVARCHAR(255),
     da_xoa TINYINT
 );
-GO
-
 -- Bảng PhongCach
 CREATE TABLE PhongCach (
     id INT IDENTITY(1,1) PRIMARY KEY,
-    ten NVARCHAR(255) UNIQUE NOT NULL,
+    ten NVARCHAR(255) NOT NULL,
     trang_thai INT,
     ngay_cap_nhat DATE,
     nguoi_tao NVARCHAR(255),
     nguoi_cap_nhat NVARCHAR(255),
     da_xoa TINYINT
 );
-GO
-
 --------------------------------------------------------------------------------
 -- 2. BẢNG SẢN PHẨM & CHI TIẾT SẢN PHẨM
 --------------------------------------------------------------------------------
@@ -120,7 +109,7 @@ GO
 CREATE TABLE SanPham (
     ma_san_pham INT IDENTITY(1,1) PRIMARY KEY,
     ten_san_pham NVARCHAR(255) NOT NULL,
-    ma_code NVARCHAR(20) NOT NULL UNIQUE,
+    ma_code NVARCHAR(20) NOT NULL,
     mo_ta NVARCHAR(1000),
     duong_dan_anh NVARCHAR(200),
     trang_thai INT,
@@ -129,8 +118,6 @@ CREATE TABLE SanPham (
     nguoi_cap_nhat NVARCHAR(200),
     da_xoa TINYINT
 );
-GO
-
 -- Bảng ChiTietSanPham
 CREATE TABLE ChiTietSanPham (
     ma_chi_tiet INT IDENTITY(1,1) PRIMARY KEY,
@@ -151,7 +138,6 @@ CREATE TABLE ChiTietSanPham (
     nguoi_tao NVARCHAR(200) NOT NULL,
     nguoi_cap_nhat NVARCHAR(200) NOT NULL
 );
-GO
 
 --------------------------------------------------------------------------------
 -- 3. BẢNG VAI TRÒ & NHÂN VIÊN
@@ -167,7 +153,6 @@ CREATE TABLE VaiTro (
     nguoi_cap_nhat NVARCHAR(255),
     da_xoa TINYINT
 );
-GO
 
 -- Bảng NhanVien
 CREATE TABLE NhanVien (
@@ -175,7 +160,7 @@ CREATE TABLE NhanVien (
     ho_ten NVARCHAR(255),
     ngay_sinh DATE,
     gioi_tinh NVARCHAR(50),
-    email NVARCHAR(255) UNIQUE,
+    email NVARCHAR(255),
     mat_khau NVARCHAR(255) NOT NULL,
     so_dien_thoai NVARCHAR(20),
     dia_chi NVARCHAR(500),
@@ -187,7 +172,7 @@ CREATE TABLE NhanVien (
     nguoi_cap_nhat NVARCHAR(255),
     da_xoa TINYINT
 );
-GO
+
 
 --------------------------------------------------------------------------------
 -- 4. BẢNG KHÁCH HÀNG & ĐỊA CHỈ
@@ -199,7 +184,7 @@ CREATE TABLE KhachHang (
     ho_ten NVARCHAR(255),
     ngay_sinh DATE,
     gioi_tinh NVARCHAR(50),
-    email NVARCHAR(255) UNIQUE,
+    email NVARCHAR(255),
     mat_khau NVARCHAR(255) NOT NULL,
     so_dien_thoai NVARCHAR(20),
     url_anh TEXT,
@@ -209,7 +194,6 @@ CREATE TABLE KhachHang (
     nguoi_cap_nhat NVARCHAR(255),
     da_xoa TINYINT
 );
-GO
 
 -- Bảng DiaChi
 CREATE TABLE DiaChi (
@@ -254,13 +238,12 @@ CREATE TABLE DonHang (
     ngay_nhan DATE,
     loai_don INT,
     ghi_chu NVARCHAR(1000),
-    ma_don NVARCHAR(10) UNIQUE NOT NULL,
+    ma_don NVARCHAR(10) NOT NULL,
     ngay_cap_nhat DATE,
     nguoi_tao NVARCHAR(255),
     nguoi_cap_nhat NVARCHAR(255),
     da_xoa TINYINT
 );
-GO
 
 -- Bảng LichSuDonHang
 CREATE TABLE LichSuDonHang (
@@ -346,7 +329,7 @@ GO
 -- Bảng PhieuTraHang
 CREATE TABLE PhieuTraHang (
     id INT IDENTITY(1,1) PRIMARY KEY,
-    ma NVARCHAR(10) UNIQUE NOT NULL,
+    ma NVARCHAR(10) NOT NULL,
     gia_tri FLOAT,
     so_tien_phai_tra REAL,
     thong_tin_thanh_toan NVARCHAR(255),
@@ -356,7 +339,6 @@ CREATE TABLE PhieuTraHang (
     nguoi_cap_nhat NVARCHAR(255),
     da_xoa TINYINT
 );
-GO
 
 -- Bảng LichSuPhieuTraHang
 CREATE TABLE LichSuPhieuTraHang (
