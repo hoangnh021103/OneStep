@@ -14,4 +14,13 @@ public interface SanPhamService {
 
     Page<SanPhamResponse> phanTrang(Pageable pageable);
 
+    SanPhamResponse add(SanPhamDTO sanPhamDTO);
+
+    SanPhamResponse update(Integer id, SanPhamDTO sanPhamDTO);
+
+    void delete(Integer id);
+
+    Optional<SanPhamResponse> getById(Integer id);
+
+
 }

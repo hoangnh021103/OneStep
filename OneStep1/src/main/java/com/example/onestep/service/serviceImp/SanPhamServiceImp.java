@@ -42,4 +42,39 @@ public class SanPhamServiceImp implements SanPhamService {
                 .collect(Collectors.toList());
         return new PageImpl<>(dtoList, pageable, page.getTotalElements());
     }
+
+    @Override
+    public SanPhamResponse add(SanPhamDTO dto) {
+        SanPham entity = modelMapper.map(dto, SanPham.class);
+        entity.setNgayCapNhat(LocalDate.now());
+        SanPham saved = sanPhamRepository.save(entity);
+        return modelMapper.map(saved, SanPhamResponse.class);
+    }
+
+    @Override
+    public SanPhamResponse update(Integer id, SanPhamDTO dto) {
+        Optional<SanPham> optional = sanPhamRepository.findById(id);
+        if (optional.isEmpty()) return null;
+
+        SanPham entity = optional.get();
+        modelMapper.map(dto, entity);
+        entity.setNgayCapNhat(LocalDate.now());
+
+        SanPham updated = sanPhamRepository.save(entity);
+        return modelMapper.map(updated, SanPhamResponse.class);
+    }
+
+    @Override
+    public void delete(Integer id) {
+        if (sanPhamRepository.existsById(id)) {
+            sanPhamRepository.deleteById(id);
+        }
+    }
+
+    @Override
+    public Optional<SanPhamResponse> getById(Integer id) {
+        return sanPhamRepository.findById(id)
+                .map(entity -> modelMapper.map(entity, SanPhamResponse.class));
+    }
 }
+

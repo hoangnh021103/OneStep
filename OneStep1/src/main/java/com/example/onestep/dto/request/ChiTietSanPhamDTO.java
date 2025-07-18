@@ -37,7 +37,6 @@ public class ChiTietSanPhamDTO {
     @NotNull(message = "Hãng sản xuất không được để trống")
     private Integer hangSanXuatId;
 
-    @Size(max = 200, message = "Đường dẫn ảnh tối đa 200 ký tự")
     private String duongDanAnh;
 
     @NotNull(message = "Giá tiền không được để trống")
@@ -61,11 +60,7 @@ public class ChiTietSanPhamDTO {
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate ngayCapNhat = LocalDate.now();
 
-    @Size(max = 200, message = "Người tạo tối đa 200 ký tự")
     @NotBlank(message = "Người tạo không được để trống")
     private String nguoiTao;
-
-    @Size(max = 200, message = "Người cập nhật tối đa 200 ký tự")
-    @NotBlank(message = "Người cập nhật không được để trống")
     private String nguoiCapNhat;
 }

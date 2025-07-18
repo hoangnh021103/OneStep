@@ -20,7 +20,7 @@ public class SanPhamDTO {
     private String tenSanPham;
 
     @NotBlank(message = "Mã code không được để trống")
-    @Size(max = 20, message = "Mã code tối đa 20 ký tự")
+    @Size(max = 20, message = "Mã code tối đa 20 ký tự")  //ma code khong duoc trung
     private String maCode;
 
     @Size(max = 1000, message = "Mô tả tối đa 1000 ký tự")
