@@ -1,8 +1,11 @@
 package com.example.onestep.service.serviceImp;
 
 import com.example.onestep.dto.request.GioHangDTO;
+import com.example.onestep.dto.request.SanPhamDTO;
 import com.example.onestep.dto.response.GioHangResponse;
+import com.example.onestep.dto.response.SanPhamResponse;
 import com.example.onestep.entity.GioHang;
+import com.example.onestep.entity.SanPham;
 import com.example.onestep.repository.GioHangRepository;
 import com.example.onestep.service.GioHangService;
 import org.modelmapper.ModelMapper;
@@ -38,6 +41,40 @@ public class GioHangServiceImp implements GioHangService {
                 .map(gh -> modelMapper.map(gh, GioHangResponse.class))
                 .collect(Collectors.toList());
         return new PageImpl<>(dtoList, pageable, page.getTotalElements());
+    }
+
+    @Override
+    public GioHangResponse add(GioHangDTO dto) {
+        GioHang entity = modelMapper.map(dto, GioHang.class);
+        entity.setNgayCapNhat(LocalDate.now());
+        GioHang saved = gioHangRepository.save(entity);
+        return modelMapper.map(saved, GioHangResponse.class);
+    }
+
+    @Override
+    public GioHangResponse update(Integer id, GioHangDTO dto) {
+        Optional<GioHang> optional = gioHangRepository.findById(id);
+        if (optional.isEmpty()) return null;
+
+        GioHang entity = optional.get();
+        modelMapper.map(dto, entity);
+        entity.setNgayCapNhat(LocalDate.now());
+
+        GioHang updated = gioHangRepository.save(entity);
+        return modelMapper.map(updated, GioHangResponse.class);
+    }
+
+    @Override
+    public void delete(Integer id) {
+        if (gioHangRepository.existsById(id)) {
+            gioHangRepository.deleteById(id);
+        }
+    }
+
+    @Override
+    public Optional<GioHangResponse> getById(Integer id) {
+        return gioHangRepository.findById(id)
+                .map(entity -> modelMapper.map(entity, GioHangResponse.class));
     }
 
 }
