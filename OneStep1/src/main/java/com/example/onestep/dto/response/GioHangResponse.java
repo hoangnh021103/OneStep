@@ -15,7 +15,7 @@ public class GioHangResponse {
 
     private Integer khachHangId;
 
-    private String tenKhachHang; // Optionally thêm tên KH nếu cần
+
 
     private LocalDate ngayTao;
 
