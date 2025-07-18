@@ -1,7 +1,9 @@
 package com.example.onestep.service;
 
 import com.example.onestep.dto.request.ChiTietSanPhamDTO;
+import com.example.onestep.dto.request.SanPhamDTO;
 import com.example.onestep.dto.response.ChiTietSanPhamResponse;
+import com.example.onestep.dto.response.SanPhamResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -13,5 +15,13 @@ public interface ChiTietSanPhamService {
     List<ChiTietSanPhamResponse> getAll();
 
     Page<ChiTietSanPhamResponse> phanTrang(Pageable pageable);
+
+    ChiTietSanPhamResponse add(ChiTietSanPhamDTO chiTietSanPhamDTO);
+
+    ChiTietSanPhamResponse update(Integer id, ChiTietSanPhamDTO chiTietSanPhamDTO);
+
+    void delete(Integer id);
+
+    Optional<ChiTietSanPhamResponse> getById(Integer id);
 
 }
