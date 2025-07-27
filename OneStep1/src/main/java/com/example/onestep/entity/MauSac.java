@@ -19,7 +19,7 @@ public class MauSac {
     @Column(name = "ten", nullable = false)
     private String ten;
 
-    @Column(name = "ma_mau")
+    @Column(name = "ma")
     private String maMau;
 
     @Column(name = "trang_thai")

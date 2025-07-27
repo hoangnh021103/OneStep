@@ -17,6 +17,7 @@ public class KichCo {
     private Integer id;
 
     @Column(name = "so_size", nullable = false)
+    @Transient
     private Double soSize;
 
     @Column(name = "trang_thai")
