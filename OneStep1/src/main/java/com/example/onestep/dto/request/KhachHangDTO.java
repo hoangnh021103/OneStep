@@ -17,14 +17,14 @@ public class KhachHangDTO {
 
     @NotBlank(message = "Họ tên không được để trống")
     @Size(max = 255, message = "Họ tên tối đa 255 ký tự")
-    private String ten;
+    private String hoTen;
 
     @Email(message = "Email không đúng định dạng")
     @Size(max = 255, message = "Email tối đa 255 ký tự")
     private String email;
 
     @Pattern(regexp = "^\\d{10,11}$", message = "Số điện thoại không hợp lệ")
-    private String sdt;
+    private String so_dien_thoai;
 
     @NotBlank(message = "Giới tính không được để trống")
     @Pattern(regexp = "Nam|Nữ|Khác", message = "Giới tính phải là Nam, Nữ hoặc Khác")

@@ -19,13 +19,14 @@ public class KhachHang {
     private Integer id;
 
     @Column(name = "ho_ten", nullable = false)
-    private String ten;
+    private String hoTen;
 
     @Column(name = "email")
     private String email;
-
+    @Column(name = "url_anh")
+    private String urlAnh;
     @Column(name = "so_dien_thoai")
-    private String sdt;
+    private String soDienThoai;
 
     @Column(name = "gioi_tinh")
     private String gioiTinh; // sửa từ Boolean → String
