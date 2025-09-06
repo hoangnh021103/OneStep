@@ -354,6 +354,74 @@ CREATE TABLE LichSuPhieuTraHang (
 GO
 
 --------------------------------------------------------------------------------
+-- BẢNG SOLE (ĐẾ GIÀY)
+--------------------------------------------------------------------------------
+CREATE TABLE DeGiay (
+    id INT IDENTITY(1,1) PRIMARY KEY,
+    ten NVARCHAR(255) NOT NULL,
+    trang_thai INT,
+    ngay_cap_nhat DATE,
+    nguoi_tao NVARCHAR(255),
+    nguoi_cap_nhat NVARCHAR(255),
+    da_xoa TINYINT
+);
+
+--------------------------------------------------------------------------------
+-- BẢNG SHIPPINGMETHOD (PHƯƠNG THỨC VẬN CHUYỂN)
+--------------------------------------------------------------------------------
+CREATE TABLE PhuongThucVanChuyen (
+    id INT IDENTITY(1,1) PRIMARY KEY,
+    ten NVARCHAR(255) NOT NULL,
+    mo_ta NVARCHAR(1000),
+    ngay_cap_nhat DATE,
+    nguoi_tao NVARCHAR(255),
+    nguoi_cap_nhat NVARCHAR(255),
+    da_xoa TINYINT
+);
+
+--------------------------------------------------------------------------------
+-- BẢNG PRODUCTIMAGE (ẢNH PHỤ SẢN PHẨM)
+--------------------------------------------------------------------------------
+CREATE TABLE AnhSanPham (
+    id INT IDENTITY(1,1) PRIMARY KEY,
+    san_pham_id INT REFERENCES SanPham(ma_san_pham),
+    duong_dan_anh NVARCHAR(200),
+    ngay_cap_nhat DATE,
+    nguoi_tao NVARCHAR(255),
+    nguoi_cap_nhat NVARCHAR(255),
+    da_xoa TINYINT
+);
+
+--------------------------------------------------------------------------------
+-- BẢNG PRODUCTPROMOTION (LIÊN KẾT SẢN PHẨM VỚI KHUYẾN MÃI)
+--------------------------------------------------------------------------------
+CREATE TABLE SanPhamKhuyenMai (
+    id INT IDENTITY(1,1) PRIMARY KEY,
+    san_pham_id INT REFERENCES SanPham(ma_san_pham),
+    khuyen_mai_id INT REFERENCES Voucher(id),
+    ngay_cap_nhat DATE,
+    nguoi_tao NVARCHAR(255),
+    nguoi_cap_nhat NVARCHAR(255),
+    da_xoa TINYINT
+);
+
+--------------------------------------------------------------------------------
+-- BẢNG RETURN_FORM_DETAIL (CHI TIẾT PHIẾU TRẢ HÀNG)
+--------------------------------------------------------------------------------
+CREATE TABLE ChiTietPhieuTraHang (
+    id INT IDENTITY(1,1) PRIMARY KEY,
+    phieu_tra_hang_id INT REFERENCES PhieuTraHang(id),
+    chi_tiet_san_pham_id INT REFERENCES ChiTietSanPham(ma_chi_tiet),
+    so_luong INT,
+    gia_tri FLOAT,
+    ghi_chu NVARCHAR(1000),
+    ngay_cap_nhat DATE,
+    nguoi_tao NVARCHAR(255),
+    nguoi_cap_nhat NVARCHAR(255),
+    da_xoa TINYINT
+);
+
+--------------------------------------------------------------------------------
 -- 9. DỮ LIỆU MẪU CHO CÁC BẢNG LOOKUP / DANH MỤC
 --------------------------------------------------------------------------------
 
@@ -509,6 +577,67 @@ INSERT INTO LichSuPhieuTraHang (phieu_tra_hang_id, trang_thai_hanh_dong, ghi_chu
 (2,1,N'Khách không nhận hàng','2025-06-10',N'admin',N'admin',0);
 GO
 
+
+--------------------------------------------------------------------------------
+-- DỮ LIỆU MẪU CHO DeGiay (SOLE)
+--------------------------------------------------------------------------------
+INSERT INTO DeGiay (ten, trang_thai, ngay_cap_nhat, nguoi_tao, nguoi_cap_nhat, da_xoa) VALUES
+(N'Đế EVA', 1, '2025-06-10', N'admin', N'admin', 0),
+(N'Đế Cao Su', 1, '2025-06-10', N'admin', N'admin', 0),
+(N'Đế PU', 1, '2025-06-10', N'admin', N'admin', 0),
+(N'Đế TPR', 1, '2025-06-10', N'admin', N'admin', 0),
+(N'Đế Phylon', 1, '2025-06-10', N'admin', N'admin', 0);
+GO
+
+--------------------------------------------------------------------------------
+-- DỮ LIỆU MẪU CHO PhuongThucVanChuyen (SHIPPINGMETHOD)
+--------------------------------------------------------------------------------
+INSERT INTO PhuongThucVanChuyen (ten, mo_ta, ngay_cap_nhat, nguoi_tao, nguoi_cap_nhat, da_xoa) VALUES
+(N'Giao hàng nhanh', N'Giao trong 24h', '2025-06-10', N'admin', N'admin', 0),
+(N'Giao hàng tiết kiệm', N'Giao trong 3-5 ngày', '2025-06-10', N'admin', N'admin', 0),
+(N'Giao hàng tiêu chuẩn', N'Giao trong 2-4 ngày', '2025-06-10', N'admin', N'admin', 0),
+(N'Nhận tại cửa hàng', N'Khách tự đến nhận', '2025-06-10', N'admin', N'admin', 0),
+(N'Giao hàng quốc tế', N'Giao ngoài lãnh thổ Việt Nam', '2025-06-10', N'admin', N'admin', 0);
+GO
+
+--------------------------------------------------------------------------------
+-- DỮ LIỆU MẪU CHO AnhSanPham (PRODUCTIMAGE)
+--------------------------------------------------------------------------------
+INSERT INTO AnhSanPham (san_pham_id, duong_dan_anh, ngay_cap_nhat, nguoi_tao, nguoi_cap_nhat, da_xoa) VALUES
+(1, N'/imgs/p1_1.jpg', '2025-06-10', N'admin', N'admin', 0),
+(1, N'/imgs/p1_2.jpg', '2025-06-10', N'admin', N'admin', 0),
+(2, N'/imgs/p2_1.jpg', '2025-06-10', N'admin', N'admin', 0),
+(3, N'/imgs/p3_1.jpg', '2025-06-10', N'admin', N'admin', 0),
+(4, N'/imgs/p4_1.jpg', '2025-06-10', N'admin', N'admin', 0);
+GO
+
+--------------------------------------------------------------------------------
+-- DỮ LIỆU MẪU CHO SanPhamKhuyenMai (PRODUCTPROMOTION)
+--------------------------------------------------------------------------------
+INSERT INTO SanPhamKhuyenMai (san_pham_id, khuyen_mai_id, ngay_cap_nhat, nguoi_tao, nguoi_cap_nhat, da_xoa) VALUES
+(1, 1, '2025-06-10', N'admin', N'admin', 0),
+(2, 2, '2025-06-10', N'admin', N'admin', 0),
+(3, 3, '2025-06-10', N'admin', N'admin', 0),
+(4, 4, '2025-06-10', N'admin', N'admin', 0),
+(5, 5, '2025-06-10', N'admin', N'admin', 0);
+GO
+
+--------------------------------------------------------------------------------
+-- DỮ LIỆU MẪU CHO ChiTietPhieuTraHang (RETURN_FORM_DETAIL)
+--------------------------------------------------------------------------------
+INSERT INTO ChiTietPhieuTraHang (phieu_tra_hang_id, chi_tiet_san_pham_id, so_luong, gia_tri, ghi_chu, ngay_cap_nhat, nguoi_tao, nguoi_cap_nhat, da_xoa) VALUES
+(1, 1, 1, 1250000, N'Lỗi sản xuất', '2025-06-10', N'admin', N'admin', 0),
+(1, 2, 2, 2500000, N'Không vừa size', '2025-06-10', N'admin', N'admin', 0),
+(2, 3, 1, 2700000, N'Khách đổi ý', '2025-06-10', N'admin', N'admin', 0),
+(2, 4, 1, 3200000, N'Giao nhầm mẫu', '2025-06-10', N'admin', N'admin', 0),
+(2, 5, 1, 1500000, N'Khách không nhận', '2025-06-10', N'admin', N'admin', 0);SELECT * FROM DeGiay;
+
+
+SELECT * FROM DeGiay;
+SELECT * FROM PhuongThucVanChuyen;
+SELECT * FROM AnhSanPham;
+SELECT * FROM SanPhamKhuyenMai;
+SELECT *FROM  ChiTietPhieuTraHang;
 
 -- 1. BẢNG DANH MỤC / LOOKUP
 SELECT * FROM ThuongHieu;
