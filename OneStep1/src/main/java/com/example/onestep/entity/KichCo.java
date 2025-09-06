@@ -17,7 +17,7 @@ public class KichCo {
     private Integer id;
 
     @Column(name = "ten")
-    private Integer ten;
+    private String ten;
 
     @Column(name = "trang_thai")
     private Integer trangThai;
