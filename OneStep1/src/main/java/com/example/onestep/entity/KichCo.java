@@ -16,9 +16,8 @@ public class KichCo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "so_size", nullable = false)
-    @Transient
-    private Double soSize;
+    @Column(name = "ten")
+    private Integer ten;
 
     @Column(name = "trang_thai")
     private Integer trangThai;
