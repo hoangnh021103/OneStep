@@ -1,9 +1,5 @@
-﻿
+﻿-- TẬP TIN SQL: TẠO DATABASE + BẢNG + DỮ LIỆU MẪU (đã chỉnh đường dẫn ảnh)
 
-    CREATE DATABASE BanGiay;
-GO
-USE BanGiay;
-GO
 
 --------------------------------------------------------------------------------
 -- 1. BẢNG LOOKUP / DANH MỤC                                           
@@ -30,6 +26,7 @@ CREATE TABLE KieuDang (
     nguoi_cap_nhat NVARCHAR(255),
     da_xoa TINYINT
 );
+
 -- Bảng KichCo
 CREATE TABLE KichCo (
     id INT IDENTITY(1,1) PRIMARY KEY,
@@ -74,7 +71,7 @@ CREATE TABLE PhuongThucThanhToan (
     da_xoa TINYINT
 );
 
--- Bảng Voucher
+-- Bảng Voucher (chỉnh duong_dan_anh thành NVARCHAR(255))
 CREATE TABLE Voucher (
     id INT IDENTITY(1,1) PRIMARY KEY,
     ma NVARCHAR(10) NOT NULL,
@@ -85,12 +82,13 @@ CREATE TABLE Voucher (
     so_luong INT,
     ngay_bat_dau DATE,
     ngay_ket_thuc DATE,
-    duong_dan_anh TEXT,
+    duong_dan_anh NVARCHAR(255),
     ngay_cap_nhat DATE,
     nguoi_tao NVARCHAR(255),
     nguoi_cap_nhat NVARCHAR(255),
     da_xoa TINYINT
 );
+
 -- Bảng PhongCach
 CREATE TABLE PhongCach (
     id INT IDENTITY(1,1) PRIMARY KEY,
@@ -101,6 +99,8 @@ CREATE TABLE PhongCach (
     nguoi_cap_nhat NVARCHAR(255),
     da_xoa TINYINT
 );
+GO
+
 --------------------------------------------------------------------------------
 -- 2. BẢNG SẢN PHẨM & CHI TIẾT SẢN PHẨM
 --------------------------------------------------------------------------------
@@ -111,13 +111,14 @@ CREATE TABLE SanPham (
     ten_san_pham NVARCHAR(255) NOT NULL,
     ma_code NVARCHAR(20) NOT NULL,
     mo_ta NVARCHAR(1000),
-    duong_dan_anh NVARCHAR(200),
+    duong_dan_anh NVARCHAR(255), -- lưu link ảnh (đã chuẩn hóa)
     trang_thai INT,
     ngay_cap_nhat DATE,
     nguoi_tao NVARCHAR(200),
     nguoi_cap_nhat NVARCHAR(200),
     da_xoa TINYINT
 );
+
 -- Bảng ChiTietSanPham
 CREATE TABLE ChiTietSanPham (
     ma_chi_tiet INT IDENTITY(1,1) PRIMARY KEY,
@@ -128,7 +129,7 @@ CREATE TABLE ChiTietSanPham (
     chat_lieu_id INT NOT NULL REFERENCES ChatLieu(id),
     mau_sac_id INT NOT NULL REFERENCES MauSac(id),
     hang_san_xuat_id INT NOT NULL REFERENCES ThuongHieu(id),
-    duong_dan_anh NVARCHAR(200) NULL,
+    duong_dan_anh NVARCHAR(255) NULL, -- lưu link ảnh chi tiết
     gia_tien FLOAT NOT NULL,
     so_luong_ton INT NOT NULL,
     trang_thai INT NOT NULL,
@@ -138,6 +139,7 @@ CREATE TABLE ChiTietSanPham (
     nguoi_tao NVARCHAR(200) NOT NULL,
     nguoi_cap_nhat NVARCHAR(200) NOT NULL
 );
+GO
 
 --------------------------------------------------------------------------------
 -- 3. BẢNG VAI TRÒ & NHÂN VIÊN
@@ -154,7 +156,7 @@ CREATE TABLE VaiTro (
     da_xoa TINYINT
 );
 
--- Bảng NhanVien
+-- Bảng NhanVien (chỉnh url_anh từ TEXT -> NVARCHAR(255))
 CREATE TABLE NhanVien (
     id INT IDENTITY(1,1) PRIMARY KEY,
     ho_ten NVARCHAR(255),
@@ -164,7 +166,7 @@ CREATE TABLE NhanVien (
     mat_khau NVARCHAR(255) NOT NULL,
     so_dien_thoai NVARCHAR(20),
     dia_chi NVARCHAR(500),
-    url_anh TEXT,
+    url_anh NVARCHAR(255), -- avatar
     vai_tro_id INT REFERENCES VaiTro(id),
     ngay_tao DATE,
     ngay_cap_nhat DATE,
@@ -172,13 +174,13 @@ CREATE TABLE NhanVien (
     nguoi_cap_nhat NVARCHAR(255),
     da_xoa TINYINT
 );
-
+GO
 
 --------------------------------------------------------------------------------
 -- 4. BẢNG KHÁCH HÀNG & ĐỊA CHỈ
 --------------------------------------------------------------------------------
 
--- Bảng KhachHang
+-- Bảng KhachHang (chỉnh url_anh TEXT -> NVARCHAR(255))
 CREATE TABLE KhachHang (
     id INT IDENTITY(1,1) PRIMARY KEY,
     ho_ten NVARCHAR(255),
@@ -187,7 +189,7 @@ CREATE TABLE KhachHang (
     email NVARCHAR(255),
     mat_khau NVARCHAR(255) NOT NULL,
     so_dien_thoai NVARCHAR(20),
-    url_anh TEXT,
+    url_anh NVARCHAR(255), -- avatar
     ngay_tao DATE,
     ngay_cap_nhat DATE,
     nguoi_tao NVARCHAR(255),
@@ -385,7 +387,7 @@ CREATE TABLE PhuongThucVanChuyen (
 CREATE TABLE AnhSanPham (
     id INT IDENTITY(1,1) PRIMARY KEY,
     san_pham_id INT REFERENCES SanPham(ma_san_pham),
-    duong_dan_anh NVARCHAR(200),
+    duong_dan_anh NVARCHAR(255),
     ngay_cap_nhat DATE,
     nguoi_tao NVARCHAR(255),
     nguoi_cap_nhat NVARCHAR(255),
@@ -420,6 +422,7 @@ CREATE TABLE ChiTietPhieuTraHang (
     nguoi_cap_nhat NVARCHAR(255),
     da_xoa TINYINT
 );
+GO
 
 --------------------------------------------------------------------------------
 -- 9. DỮ LIỆU MẪU CHO CÁC BẢNG LOOKUP / DANH MỤC
@@ -490,23 +493,24 @@ INSERT INTO PhongCach (ten, trang_thai, ngay_cap_nhat, nguoi_tao, nguoi_cap_nhat
 GO
 
 --------------------------------------------------------------------------------
--- 10. DỮ LIỆU MẪU CHO SẢN PHẨM & CHI TIẾT
+-- 10. DỮ LIỆU MẪU CHO SẢN PHẨM & CHI TIẾT (ĐÃ DÙNG LINK ẢNH BẠN CUNG CẤP)
 --------------------------------------------------------------------------------
 
 INSERT INTO SanPham (ten_san_pham, ma_code, mo_ta, duong_dan_anh, trang_thai, ngay_cap_nhat, nguoi_tao, nguoi_cap_nhat, da_xoa) VALUES
-(N'AirMax 2025',N'AM25',N'Phiên bản AirMax mới nhất',N'/imgs/p1.jpg',1,'2025-06-08',N'admin',N'admin',0),
-(N'Zoom Fly',N'ZF20',N'Giày chạy bộ chuyên nghiệp',N'/imgs/p2.jpg',1,'2025-06-08',N'admin',N'admin',0),
-(N'Classic Leather',N'CL90',N'Phong cách cổ điển',N'/imgs/p3.jpg',1,'2025-06-08',N'admin',N'admin',0),
-(N'Terra Trail',N'TT10',N'Giày chạy địa hình',N'/imgs/p4.jpg',1,'2025-06-08',N'admin',N'admin',0),
-(N'Easy Walk',N'EW05',N'Giày lười tiện lợi',N'/imgs/p5.jpg',1,'2025-06-08',N'admin',N'admin',0);
+(N'Giày Converse Sneaker', N'CONV-01', N'Giày sneaker Converse phong cách cổ điển', 'https://drake.vn/image/catalog/H%C3%ACnh%20content/gi%C3%A0y-sneaker-converse/giay-sneaker-converse-09.jpg', 1, '2025-06-08', N'admin', N'admin', 0),
+(N'Giày Adidas Ultraboost', N'AD-UB-20', N'Giày chạy bộ êm ái', 'https://bizweb.dktcdn.net/100/413/756/products/image-1702894353567.png?v=1730995459190', 1, '2025-06-08', N'admin', N'admin', 0),
+(N'Giày Nike Court Vision Mid', N'NIKE-CV-MID', N'Giày Nike phối màu Smoke Grey', 'https://trungsneaker.com/wp-content/uploads/2022/12/giay-nike-court-vision-mid-smoke-grey-dn3577-002-44-1020x680.jpg', 1, '2025-06-08', N'admin', N'admin', 0),
+(N'Giày Vans Old Skool', N'VANS-OS-01', N'Giày trượt ván cổ điển đen trắng', 'https://bizweb.dktcdn.net/100/140/774/products/vans-old-skool-black-white-vn000d3hy28-3.jpg?v=1625905150880', 1, '2025-06-08', N'admin', N'admin', 0),
+(N'Giày Puma Speedcat OG', N'PUMA-SC-01', N'Giày Puma Speedcat màu xanh light blue', 'https://sneakerdaily.vn/wp-content/uploads/2024/10/Giay-PUMA-Speedcat-OG-Team-Light-Blue-398847-01.jpg', 1, '2025-06-08', N'admin', N'admin', 0);
 GO
 
+-- Chi tiết sản phẩm (duong_dan_anh dùng link tương ứng cho từng san_pham_id)
 INSERT INTO ChiTietSanPham (thuong_hieu_id, kieu_dang_id, kich_co_id, san_pham_id, chat_lieu_id, mau_sac_id, hang_san_xuat_id, duong_dan_anh, gia_tien, so_luong_ton, trang_thai, tien_giam_gia, da_xoa, ngay_cap_nhat, nguoi_tao, nguoi_cap_nhat) VALUES
-(1,1,1,1,1,1,1,N'/imgs/d1.jpg',2500000,50,1,100000,0,'2025-06-08',N'admin',N'admin'),
-(2,2,2,2,2,2,2,N'/imgs/d2.jpg',2700000,60,1,150000,0,'2025-06-08',N'admin',N'admin'),
-(3,3,3,3,3,3,3,N'/imgs/d3.jpg',1800000,80,1,0,0,'2025-06-08',N'admin',N'admin'),
-(4,4,4,4,4,4,4,N'/imgs/d4.jpg',3200000,30,1,200000,0,'2025-06-08',N'admin',N'admin'),
-(5,5,5,5,5,5,5,N'/imgs/d5.jpg',1500000,100,1,50000,0,'2025-06-08',N'admin',N'admin');
+(4,1,1,1,1,1,4,'https://drake.vn/image/catalog/H%C3%ACnh%20content/gi%C3%A0y-sneaker-converse/giay-sneaker-converse-09.jpg',2500000,50,1,100000,0,'2025-06-08',N'admin',N'admin'),
+(2,2,2,2,2,2,2,'https://bizweb.dktcdn.net/100/413/756/products/image-1702894353567.png?v=1730995459190',2700000,60,1,150000,0,'2025-06-08',N'admin',N'admin'),
+(1,3,3,3,3,3,1,'https://trungsneaker.com/wp-content/uploads/2022/12/giay-nike-court-vision-mid-smoke-grey-dn3577-002-44-1020x680.jpg',1800000,80,1,0,0,'2025-06-08',N'admin',N'admin'),
+(5,2,4,4,4,4,5,'https://bizweb.dktcdn.net/100/140/774/products/vans-old-skool-black-white-vn000d3hy28-3.jpg?v=1625905150880',3200000,30,1,200000,0,'2025-06-08',N'admin',N'admin'),
+(3,1,5,5,5,5,3,'https://sneakerdaily.vn/wp-content/uploads/2024/10/Giay-PUMA-Speedcat-OG-Team-Light-Blue-398847-01.jpg',1500000,100,1,50000,0,'2025-06-08',N'admin',N'admin');
 GO
 
 --------------------------------------------------------------------------------
@@ -520,20 +524,19 @@ INSERT INTO VaiTro (ten_vai_tro, ngay_tao, ngay_cap_nhat, nguoi_tao, nguoi_cap_n
 GO
 
 INSERT INTO NhanVien (ho_ten, ngay_sinh, gioi_tinh, email, mat_khau, so_dien_thoai, dia_chi, url_anh, vai_tro_id, ngay_tao, ngay_cap_nhat, nguoi_tao, nguoi_cap_nhat, da_xoa) VALUES
-(N'Nguyễn Văn A','1990-01-01',N'Nam',N'a@shop.com',N'123456',N'0123456789',N'123 Lý Thường Kiệt',N'/imgs/nhanvien1.jpg',1,'2025-06-08','2025-06-08',N'admin',N'admin',0),
-(N'Trần Thị B','1992-02-02',N'Nữ',N'b@shop.com',N'abcdef',N'0987654321',N'456 Trần Hưng Đạo',N'/imgs/nhanvien2.jpg',2,'2025-06-08','2025-06-08',N'admin',N'admin',0);
+(N'Nguyễn Văn A','1990-01-01',N'Nam',N'a@shop.com',N'123456',N'0123456789',N'123 Lý Thường Kiệt','https://randomuser.me/api/portraits/men/10.jpg',1,'2025-06-08','2025-06-08',N'admin',N'admin',0),
+(N'Trần Thị B','1992-02-02',N'Nữ',N'b@shop.com',N'abcdef',N'0987654321',N'456 Trần Hưng Đạo','https://randomuser.me/api/portraits/women/11.jpg',2,'2025-06-08','2025-06-08',N'admin',N'admin',0);
 GO
 
 INSERT INTO KhachHang (ho_ten, ngay_sinh, gioi_tinh, email, mat_khau, so_dien_thoai, url_anh, ngay_tao, ngay_cap_nhat, nguoi_tao, nguoi_cap_nhat, da_xoa) VALUES
-(N'Lê Văn C','1995-03-03',N'Nam',N'c@gmail.com',N'12345678',N'0901234567',N'/imgs/kh1.jpg','2025-06-08','2025-06-08',N'admin',N'admin',0),
-(N'Phạm Thị D','1993-04-04',N'Nữ',N'd@gmail.com',N'qwerty',N'0912345678',N'/imgs/kh2.jpg','2025-06-08','2025-06-08',N'admin',N'admin',0);
+(N'Lê Văn C','1995-03-03',N'Nam',N'c@gmail.com',N'12345678',N'0901234567','https://randomuser.me/api/portraits/men/12.jpg','2025-06-08','2025-06-08',N'admin',N'admin',0),
+(N'Phạm Thị D','1993-04-04',N'Nữ',N'd@gmail.com',N'qwerty',N'0912345678','https://randomuser.me/api/portraits/women/13.jpg','2025-06-08','2025-06-08',N'admin',N'admin',0);
 GO
 
 INSERT INTO DiaChi (khach_hang_id, ma_quan, ten_quan, ma_tinh, ten_tinh, ma_phuong, ten_phuong, la_mac_dinh, thong_tin_them, so_dien_thoai, ngay_cap_nhat, nguoi_tao, nguoi_cap_nhat, da_xoa) VALUES
 (1,N'Q1',N'Quận 1',N'HCM',N'Hồ Chí Minh',N'P1',N'Phường 1',1,N'Nhà riêng',N'0901234567','2025-06-08',N'admin',N'admin',0),
 (2,N'Q3',N'Quận 3',N'HCM',N'Hồ Chí Minh',N'P2',N'Phường 2',0,N'Văn phòng',N'0912345678','2025-06-08',N'admin',N'admin',0);
 GO
-
 
 INSERT INTO DonHang (khach_hang_id, nhan_vien_id, voucher_id, dia_chi_id, so_dien_thoai, ho_ten, email, tong_tien_goc, tien_giam, tong_tien, tien_ship, ngay_xac_nhan, ngay_du_kien, ngay_nhan, loai_don, ghi_chu, ma_don, ngay_cap_nhat, nguoi_tao, nguoi_cap_nhat, da_xoa) VALUES
 (1,1,1,1,N'0901234567',N'Lê Văn C',N'c@gmail.com',2500000,100000,2400000,30000,'2025-06-09','2025-06-11','2025-06-11',0,N'Giao nhanh',N'DH001','2025-06-09',N'admin',N'admin',0),
@@ -544,7 +547,6 @@ INSERT INTO LichSuDonHang (don_hang_id, trang_thai, ngay_cap_nhat, nguoi_tao, ng
 (1,1,'2025-06-09',N'admin',N'admin',0),
 (2,1,'2025-06-09',N'admin',N'admin',0);
 GO
-
 
 INSERT INTO GioHang (khach_hang_id, ngay_tao, ngay_cap_nhat, nguoi_tao, nguoi_cap_nhat, da_xoa) VALUES
 (1,'2025-06-08','2025-06-08',N'admin',N'admin',0),
@@ -577,7 +579,6 @@ INSERT INTO LichSuPhieuTraHang (phieu_tra_hang_id, trang_thai_hanh_dong, ghi_chu
 (2,1,N'Khách không nhận hàng','2025-06-10',N'admin',N'admin',0);
 GO
 
-
 --------------------------------------------------------------------------------
 -- DỮ LIỆU MẪU CHO DeGiay (SOLE)
 --------------------------------------------------------------------------------
@@ -602,13 +603,15 @@ GO
 
 --------------------------------------------------------------------------------
 -- DỮ LIỆU MẪU CHO AnhSanPham (PRODUCTIMAGE)
+-- (dùng link ảnh chính cho ảnh phụ, có thể thêm nhiều ảnh nếu cần)
 --------------------------------------------------------------------------------
 INSERT INTO AnhSanPham (san_pham_id, duong_dan_anh, ngay_cap_nhat, nguoi_tao, nguoi_cap_nhat, da_xoa) VALUES
-(1, N'/imgs/p1_1.jpg', '2025-06-10', N'admin', N'admin', 0),
-(1, N'/imgs/p1_2.jpg', '2025-06-10', N'admin', N'admin', 0),
-(2, N'/imgs/p2_1.jpg', '2025-06-10', N'admin', N'admin', 0),
-(3, N'/imgs/p3_1.jpg', '2025-06-10', N'admin', N'admin', 0),
-(4, N'/imgs/p4_1.jpg', '2025-06-10', N'admin', N'admin', 0);
+(1, N'https://drake.vn/image/catalog/H%C3%ACnh%20content/gi%C3%A0y-sneaker-converse/giay-sneaker-converse-09.jpg', '2025-06-10', N'admin', N'admin', 0),
+(1, N'https://drake.vn/image/catalog/H%C3%ACnh%20content/gi%C3%A0y-sneaker-converse/giay-sneaker-converse-09.jpg', '2025-06-10', N'admin', N'admin', 0),
+(2, N'https://bizweb.dktcdn.net/100/413/756/products/image-1702894353567.png?v=1730995459190', '2025-06-10', N'admin', N'admin', 0),
+(3, N'https://trungsneaker.com/wp-content/uploads/2022/12/giay-nike-court-vision-mid-smoke-grey-dn3577-002-44-1020x680.jpg', '2025-06-10', N'admin', N'admin', 0),
+(4, N'https://bizweb.dktcdn.net/100/140/774/products/vans-old-skool-black-white-vn000d3hy28-3.jpg?v=1625905150880', '2025-06-10', N'admin', N'admin', 0),
+(5, N'https://sneakerdaily.vn/wp-content/uploads/2024/10/Giay-PUMA-Speedcat-OG-Team-Light-Blue-398847-01.jpg', '2025-06-10', N'admin', N'admin', 0);
 GO
 
 --------------------------------------------------------------------------------
@@ -630,16 +633,18 @@ INSERT INTO ChiTietPhieuTraHang (phieu_tra_hang_id, chi_tiet_san_pham_id, so_luo
 (1, 2, 2, 2500000, N'Không vừa size', '2025-06-10', N'admin', N'admin', 0),
 (2, 3, 1, 2700000, N'Khách đổi ý', '2025-06-10', N'admin', N'admin', 0),
 (2, 4, 1, 3200000, N'Giao nhầm mẫu', '2025-06-10', N'admin', N'admin', 0),
-(2, 5, 1, 1500000, N'Khách không nhận', '2025-06-10', N'admin', N'admin', 0);SELECT * FROM DeGiay;
+(2, 5, 1, 1500000, N'Khách không nhận', '2025-06-10', N'admin', N'admin', 0);
+GO
 
-
+-- (Các SELECT kiểm tra — bạn có thể bỏ nếu không cần)
 SELECT * FROM DeGiay;
 SELECT * FROM PhuongThucVanChuyen;
 SELECT * FROM AnhSanPham;
 SELECT * FROM SanPhamKhuyenMai;
-SELECT *FROM  ChiTietPhieuTraHang;
+SELECT * FROM ChiTietPhieuTraHang;
+GO
 
--- 1. BẢNG DANH MỤC / LOOKUP
+-- Các SELECT kiểm tra bảng danh mục / sản phẩm / người dùng / đơn hàng ...
 SELECT * FROM ThuongHieu;
 SELECT * FROM KieuDang;
 SELECT * FROM KichCo;
@@ -648,31 +653,18 @@ SELECT * FROM MauSac;
 SELECT * FROM PhuongThucThanhToan;
 SELECT * FROM Voucher;
 SELECT * FROM PhongCach;
-
--- 2. BẢNG SẢN PHẨM
 SELECT * FROM SanPham;
 SELECT * FROM ChiTietSanPham;
-
--- 3. BẢNG NHÂN VIÊN
 SELECT * FROM VaiTro;
 SELECT * FROM NhanVien;
-
--- 4. BẢNG KHÁCH HÀNG
 SELECT * FROM KhachHang;
 SELECT * FROM DiaChi;
-
--- 5. BẢNG ĐƠN HÀNG
 SELECT * FROM DonHang;
 SELECT * FROM LichSuDonHang;
 SELECT * FROM ChiTietDonHang;
-
--- 6. BẢNG GIỎ HÀNG
 SELECT * FROM GioHang;
 SELECT * FROM ChiTietGioHang;
-
--- 7. BẢNG THANH TOÁN
 SELECT * FROM ThanhToan;
-
--- 8. BẢNG TRẢ HÀNG
 SELECT * FROM PhieuTraHang;
 SELECT * FROM LichSuPhieuTraHang;
+GO
