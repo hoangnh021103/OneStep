@@ -51,11 +51,15 @@ public class AnhSanPhamServiceImpl implements AnhSanPhamService {
     @Override
     public AnhSanPhamResponse add(AnhSanPhamDTO dto) {
         AnhSanPham entity = modelMapper.map(dto, AnhSanPham.class);
-        // Set SanPham entity
-        if (dto.getSanPhamId() != null) {
-            Optional<SanPham> sanPham = sanPhamRepository.findById(dto.getSanPhamId());
-            sanPham.ifPresent(entity::setSanPham);
+        // Validate sanPhamId
+        if (dto.getSanPhamId() == null) {
+            throw new IllegalArgumentException("sanPhamId không được null");
         }
+        Optional<SanPham> sanPham = sanPhamRepository.findById(dto.getSanPhamId());
+        if (sanPham.isEmpty()) {
+            throw new IllegalArgumentException("Không tìm thấy sản phẩm với id: " + dto.getSanPhamId());
+        }
+        entity.setSanPham(sanPham.get());
         entity.setNgayCapNhat(LocalDate.now());
         entity.setDaXoa(0);
         AnhSanPham saved = anhSanPhamRepository.save(entity);
@@ -69,11 +73,15 @@ public class AnhSanPhamServiceImpl implements AnhSanPhamService {
 
         AnhSanPham entity = optional.get();
         modelMapper.map(dto, entity);
-        // Update SanPham entity
-        if (dto.getSanPhamId() != null) {
-            Optional<SanPham> sanPham = sanPhamRepository.findById(dto.getSanPhamId());
-            sanPham.ifPresent(entity::setSanPham);
+        // Validate sanPhamId
+        if (dto.getSanPhamId() == null) {
+            throw new IllegalArgumentException("sanPhamId không được null");
         }
+        Optional<SanPham> sanPham = sanPhamRepository.findById(dto.getSanPhamId());
+        if (sanPham.isEmpty()) {
+            throw new IllegalArgumentException("Không tìm thấy sản phẩm với id: " + dto.getSanPhamId());
+        }
+        entity.setSanPham(sanPham.get());
         entity.setNgayCapNhat(LocalDate.now());
 
         AnhSanPham updated = anhSanPhamRepository.save(entity);
