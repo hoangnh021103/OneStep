@@ -16,7 +16,8 @@ public class KichCoDTO {
     private Integer id;
 
     @NotNull(message = "Số size không được để trống")
-    private String ten;
+    @DecimalMin(value = "0.0", inclusive = false, message = "Số size phải lớn hơn 0")
+    private Double soSize;
 
     private Integer trangThai;
 

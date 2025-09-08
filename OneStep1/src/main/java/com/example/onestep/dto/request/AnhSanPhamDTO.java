@@ -13,14 +13,6 @@ import java.time.LocalDate;
 @ToString
 public class AnhSanPhamDTO {
 
-    private Integer id;
-
-    @NotNull(message = "ID sản phẩm không được để trống")
-    private Integer sanPhamId;
-
-    @Size(max = 200, message = "Đường dẫn ảnh tối đa 200 ký tự")
-    private String duongDanAnh;
-
     private LocalDate ngayCapNhat;
 
     @Size(max = 255, message = "Người tạo tối đa 255 ký tự")
@@ -30,4 +22,7 @@ public class AnhSanPhamDTO {
     private String nguoiCapNhat;
 
     private Integer daXoa;
+
+    // Thêm trường này để truyền id sản phẩm
+    private Integer sanPhamId;
 }
