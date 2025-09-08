@@ -5,7 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="fc3a053f-9c7b-4b56-b3c8-66d6acd1258c" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/OneStep1/src/main/java/com/example/onestep/service/serviceImp/AnhSanPhamServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/OneStep1/src/main/java/com/example/onestep/service/serviceImp/AnhSanPhamServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/OneStep1/src/main/java/com/example/onestep/dto/request/MauSacDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/OneStep1/src/main/java/com/example/onestep/dto/request/MauSacDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/OneStep1/src/main/java/com/example/onestep/entity/MauSac.java" beforeDir="false" afterPath="$PROJECT_DIR$/OneStep1/src/main/java/com/example/onestep/entity/MauSac.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/OneStep1/src/main/java/com/example/onestep/service/serviceImp/MauSacServicelmp.java" beforeDir="false" afterPath="$PROJECT_DIR$/OneStep1/src/main/java/com/example/onestep/service/serviceImp/MauSacServicelmp.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -47,6 +50,8 @@
       <workItem from="1749370518963" duration="34000" />
       <workItem from="1757263624241" duration="7000" />
       <workItem from="1757264453398" duration="6000" />
+      <workItem from="1757343372427" duration="17000" />
+      <workItem from="1757344539888" duration="9000" />
     </task>
     <servers />
   </component>

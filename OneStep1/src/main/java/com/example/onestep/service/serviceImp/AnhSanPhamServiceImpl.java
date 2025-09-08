@@ -72,7 +72,9 @@ public class AnhSanPhamServiceImpl implements AnhSanPhamService {
         if (optional.isEmpty() || optional.get().getDaXoa() == 1) return null;
 
         AnhSanPham entity = optional.get();
+        Integer persistedId = entity.getId();
         modelMapper.map(dto, entity);
+        entity.setId(persistedId);
         // Validate sanPhamId
         if (dto.getSanPhamId() == null) {
             throw new IllegalArgumentException("sanPhamId không được null");

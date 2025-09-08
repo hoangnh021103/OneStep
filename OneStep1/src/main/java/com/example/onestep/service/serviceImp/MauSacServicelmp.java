@@ -18,6 +18,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.text.Normalizer;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -51,6 +52,11 @@ public class MauSacServicelmp implements MauSacService {
     public MauSacResponse add(MauSacDTO dto) {
         MauSac entity = modelMapper.map(dto, MauSac.class);
         entity.setNgayCapNhat(LocalDate.now());
+        // đảm bảo không null trường bắt buộc và mặc định da_xoa
+        if (entity.getMaMau() == null || entity.getMaMau().trim().isEmpty()) {
+            entity.setMaMau(generateMaFromTen(entity.getTen()));
+        }
+        entity.setDaXoa(entity.getDaXoa() == null ? 0 : entity.getDaXoa());
         MauSac saved = mauSacRepository.save(entity);
         return modelMapper.map(saved, MauSacResponse.class);
     }
@@ -61,11 +67,36 @@ public class MauSacServicelmp implements MauSacService {
         if (optional.isEmpty()) return null;
 
         MauSac entity = optional.get();
+        Integer persistedId = entity.getId();
         modelMapper.map(dto, entity);
+        // đảm bảo không thay đổi khóa chính
+        entity.setId(persistedId);
         entity.setNgayCapNhat(LocalDate.now());
-
+        if (entity.getMaMau() == null || entity.getMaMau().trim().isEmpty()) {
+            entity.setMaMau(generateMaFromTen(entity.getTen()));
+        }
         MauSac updated = mauSacRepository.save(entity);
         return modelMapper.map(updated, MauSacResponse.class);
+    }
+
+    private String generateMaFromTen(String ten) {
+        if (ten == null || ten.trim().isEmpty()) {
+            return "COLOR" + System.currentTimeMillis() % 10000; // fallback đơn giản
+        }
+        String normalized = Normalizer.normalize(ten, Normalizer.Form.NFD)
+                .replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
+        String code = normalized
+                .replaceAll("[^a-zA-Z0-9]", "_")
+                .replaceAll("_+", "_")
+                .replaceAll("^_+|_+$", "")
+                .toUpperCase();
+        if (code.length() > 10) {
+            code = code.substring(0, 10);
+        }
+        if (code.isEmpty()) {
+            code = "COLOR" + System.currentTimeMillis() % 10000;
+        }
+        return code;
     }
 
     @Override

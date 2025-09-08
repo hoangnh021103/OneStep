@@ -16,10 +16,10 @@ public class MauSac {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "ten", nullable = false)
+    @Column(name = "ten")
     private String ten;
 
-    @Column(name = "ma")
+    @Column(name = "ma", length = 10)
     private String maMau;
 
     @Column(name = "trang_thai")
