@@ -22,7 +22,5 @@ public class AnhSanPhamDTO {
     private String nguoiCapNhat;
 
     private Integer daXoa;
-
-    // Thêm trường này để truyền id sản phẩm
     private Integer sanPhamId;
 }
