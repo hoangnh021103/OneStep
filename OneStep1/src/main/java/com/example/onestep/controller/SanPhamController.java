@@ -36,7 +36,7 @@ public class SanPhamController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<SanPhamResponse> add(@RequestBody @Valid SanPhamDTO dto) {
+    public ResponseEntity<SanPhamResponse> add(@Valid SanPhamDTO dto) {
         SanPhamResponse response = sanPhamService.add(dto);
         return ResponseEntity.ok(response);
     }

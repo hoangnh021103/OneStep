@@ -19,9 +19,8 @@ public interface ChiTietSanPhamService {
     Page<ChiTietSanPhamResponse> timKiemChiTietSanPham(ChiTietSanPhamSearchDTO searchDTO, Pageable pageable);
     List<ChiTietSanPhamResponse> timKiemTheoTen(String tenSanPham);
     List<ChiTietSanPhamResponse> locTheoGia(Float giaMin, Float giaMax);
-    List<ChiTietSanPhamResponse> locTheoThuongHieu(Integer thuongHieuId);
+
     List<ChiTietSanPhamResponse> locTheoMauSac(Integer mauSacId);
     List<ChiTietSanPhamResponse> locTheoKichCo(Integer kichCoId);
-    List<ChiTietSanPhamResponse> locTheoKieuDang(Integer kieuDangId);
-    List<ChiTietSanPhamResponse> locTheoChatLieu(Integer chatLieuId);
+
 }

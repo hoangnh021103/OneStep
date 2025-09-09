@@ -87,11 +87,6 @@ public class ChiTietSanPhamController {
         return ResponseEntity.ok(result);
     }
 
-    @GetMapping("/loc-theo-thuong-hieu")
-    public ResponseEntity<List<ChiTietSanPhamResponse>> locTheoThuongHieu(@RequestParam Integer thuongHieuId) {
-        List<ChiTietSanPhamResponse> result = chiTietSanPhamService.locTheoThuongHieu(thuongHieuId);
-        return ResponseEntity.ok(result);
-    }
 
     @GetMapping("/loc-theo-mau-sac")
     public ResponseEntity<List<ChiTietSanPhamResponse>> locTheoMauSac(@RequestParam Integer mauSacId) {
@@ -105,15 +100,5 @@ public class ChiTietSanPhamController {
         return ResponseEntity.ok(result);
     }
 
-    @GetMapping("/loc-theo-kieu-dang")
-    public ResponseEntity<List<ChiTietSanPhamResponse>> locTheoKieuDang(@RequestParam Integer kieuDangId) {
-        List<ChiTietSanPhamResponse> result = chiTietSanPhamService.locTheoKieuDang(kieuDangId);
-        return ResponseEntity.ok(result);
-    }
 
-    @GetMapping("/loc-theo-chat-lieu")
-    public ResponseEntity<List<ChiTietSanPhamResponse>> locTheoChatLieu(@RequestParam Integer chatLieuId) {
-        List<ChiTietSanPhamResponse> result = chiTietSanPhamService.locTheoChatLieu(chatLieuId);
-        return ResponseEntity.ok(result);
-    }
 }

@@ -68,11 +68,8 @@ public class ChiTietSanPhamServiceImp implements ChiTietSanPhamService {
 
         // Gán các quan hệ
         entity.setSanPham(sanPhamRepository.findById(dto.getSanPhamId()).orElse(null));
-        entity.setThuongHieu(thuongHieuRepository.findById(dto.getThuongHieuId()).orElse(null));
-        entity.setHangSanXuat(thuongHieuRepository.findById(dto.getHangSanXuatId()).orElse(null));
-        entity.setKieuDang(kieuDangRepository.findById(dto.getKieuDangId()).orElse(null));
         entity.setKichCo(kichCoRepository.findById(dto.getKichCoId()).orElse(null));
-        entity.setChatLieu(chatLieuRepository.findById(dto.getChatLieuId()).orElse(null));
+
         entity.setMauSac(mauSacRepository.findById(dto.getMauSacId()).orElse(null));
 
         // Gán các thông tin hệ thống
@@ -108,30 +105,14 @@ public class ChiTietSanPhamServiceImp implements ChiTietSanPhamService {
                         .orElseThrow(() -> new RuntimeException("Không tìm thấy sản phẩm với ID: " + dto.getSanPhamId()))
         );
 
-        entity.setThuongHieu(
-                thuongHieuRepository.findById(dto.getThuongHieuId())
-                        .orElseThrow(() -> new RuntimeException("Không tìm thấy thương hiệu với ID: " + dto.getThuongHieuId()))
-        );
 
-        entity.setHangSanXuat(
-                thuongHieuRepository.findById(dto.getHangSanXuatId())
-                        .orElseThrow(() -> new RuntimeException("Không tìm thấy hãng sản xuất với ID: " + dto.getHangSanXuatId()))
-        );
-
-        entity.setKieuDang(
-                kieuDangRepository.findById(dto.getKieuDangId())
-                        .orElseThrow(() -> new RuntimeException("Không tìm thấy kiểu dáng với ID: " + dto.getKieuDangId()))
-        );
 
         entity.setKichCo(
                 kichCoRepository.findById(dto.getKichCoId())
                         .orElseThrow(() -> new RuntimeException("Không tìm thấy kích cỡ với ID: " + dto.getKichCoId()))
         );
 
-        entity.setChatLieu(
-                chatLieuRepository.findById(dto.getChatLieuId())
-                        .orElseThrow(() -> new RuntimeException("Không tìm thấy chất liệu với ID: " + dto.getChatLieuId()))
-        );
+
 
         entity.setMauSac(
                 mauSacRepository.findById(dto.getMauSacId())
@@ -180,14 +161,10 @@ public class ChiTietSanPhamServiceImp implements ChiTietSanPhamService {
                         ctsp.getTrangThai().equals(searchDTO.getTrangThai()))
                 .filter(ctsp -> searchDTO.getDaXoa() == null || 
                         ctsp.getDaXoa().equals(searchDTO.getDaXoa()))
-                .filter(ctsp -> searchDTO.getThuongHieuId() == null || 
-                        ctsp.getThuongHieu().getId().equals(searchDTO.getThuongHieuId()))
-                .filter(ctsp -> searchDTO.getKieuDangId() == null || 
-                        ctsp.getKieuDang().getId().equals(searchDTO.getKieuDangId()))
+
                 .filter(ctsp -> searchDTO.getKichCoId() == null || 
                         ctsp.getKichCo().getId().equals(searchDTO.getKichCoId()))
-                .filter(ctsp -> searchDTO.getChatLieuId() == null || 
-                        ctsp.getChatLieu().getId().equals(searchDTO.getChatLieuId()))
+
                 .filter(ctsp -> searchDTO.getMauSacId() == null || 
                         ctsp.getMauSac().getId().equals(searchDTO.getMauSacId()))
                 .filter(ctsp -> searchDTO.getGiaMin() == null || 
@@ -226,14 +203,7 @@ public class ChiTietSanPhamServiceImp implements ChiTietSanPhamService {
                 .collect(Collectors.toList());
     }
 
-    @Override
-    public List<ChiTietSanPhamResponse> locTheoThuongHieu(Integer thuongHieuId) {
-        List<ChiTietSanPham> allChiTietSanPham = chiTietSanPhamRepository.findAll();
-        return allChiTietSanPham.stream()
-                .filter(ctsp -> ctsp.getThuongHieu().getId().equals(thuongHieuId))
-                .map(ctsp -> modelMapper.map(ctsp, ChiTietSanPhamResponse.class))
-                .collect(Collectors.toList());
-    }
+
 
     @Override
     public List<ChiTietSanPhamResponse> locTheoMauSac(Integer mauSacId) {
@@ -253,21 +223,5 @@ public class ChiTietSanPhamServiceImp implements ChiTietSanPhamService {
                 .collect(Collectors.toList());
     }
 
-    @Override
-    public List<ChiTietSanPhamResponse> locTheoKieuDang(Integer kieuDangId) {
-        List<ChiTietSanPham> allChiTietSanPham = chiTietSanPhamRepository.findAll();
-        return allChiTietSanPham.stream()
-                .filter(ctsp -> ctsp.getKieuDang().getId().equals(kieuDangId))
-                .map(ctsp -> modelMapper.map(ctsp, ChiTietSanPhamResponse.class))
-                .collect(Collectors.toList());
-    }
 
-    @Override
-    public List<ChiTietSanPhamResponse> locTheoChatLieu(Integer chatLieuId) {
-        List<ChiTietSanPham> allChiTietSanPham = chiTietSanPhamRepository.findAll();
-        return allChiTietSanPham.stream()
-                .filter(ctsp -> ctsp.getChatLieu().getId().equals(chatLieuId))
-                .map(ctsp -> modelMapper.map(ctsp, ChiTietSanPhamResponse.class))
-                .collect(Collectors.toList());
-    }
 }

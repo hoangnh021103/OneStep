@@ -26,6 +26,26 @@ public class SanPham {
     @Column(name = "mo_ta")
     private String moTa;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "thuong_hieu_id", referencedColumnName = "id")
+    private ThuongHieu thuongHieu;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "chat_lieu_id", referencedColumnName = "id")
+    private ChatLieu chatLieu;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "de_giay_id", referencedColumnName = "id")
+    private DeGiay deGiay;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "kieu_dang_id", referencedColumnName = "id")
+    private KieuDang kieuDang;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "hang_san_xuat_id", referencedColumnName = "id")
+    private ThuongHieu hangSanXuat; // Dùng lại entity ThuongHieu
+
     @Column(name = "duong_dan_anh")
     private String duongDanAnh;
 

@@ -20,14 +20,6 @@ public class ChiTietSanPham {
     private Integer maChiTiet;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "thuong_hieu_id", referencedColumnName = "id")
-    private ThuongHieu thuongHieu;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "kieu_dang_id", referencedColumnName = "id")
-    private KieuDang kieuDang;
-
-    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "kich_co_id", referencedColumnName = "id")
     private KichCo kichCo;
 
@@ -36,16 +28,8 @@ public class ChiTietSanPham {
     private SanPham sanPham;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "chat_lieu_id", referencedColumnName = "id")
-    private ChatLieu chatLieu;
-
-    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "mau_sac_id", referencedColumnName = "id")
     private MauSac mauSac;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "hang_san_xuat_id", referencedColumnName = "id")
-    private ThuongHieu hangSanXuat; // Dùng lại entity ThuongHieu
 
     @Column(name = "duong_dan_anh")
     private String duongDanAnh;
