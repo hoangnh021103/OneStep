@@ -1,7 +1,6 @@
 package com.example.onestep.controller;
 
 import com.example.onestep.dto.request.SanPhamDTO;
-import com.example.onestep.dto.request.SanPhamSearchDTO;
 import com.example.onestep.dto.response.SanPhamResponse;
 import com.example.onestep.service.SanPhamService;
 import jakarta.validation.Valid;
@@ -61,33 +60,5 @@ public class SanPhamController {
         Optional<SanPhamResponse> optional = sanPhamService.getById(id);
         return optional.map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
-    }
-
-    @PostMapping("/tim-kiem")
-    public ResponseEntity<Page<SanPhamResponse>> timKiemSanPham(
-            @RequestBody SanPhamSearchDTO searchDTO,
-            @RequestParam(defaultValue = "0") Integer page,
-            @RequestParam(defaultValue = "10") Integer size) {
-        Pageable pageable = PageRequest.of(page, size);
-        Page<SanPhamResponse> result = sanPhamService.timKiemSanPham(searchDTO, pageable);
-        return ResponseEntity.ok(result);
-    }
-
-    @GetMapping("/tim-kiem-ten")
-    public ResponseEntity<List<SanPhamResponse>> timKiemTheoTen(@RequestParam String tenSanPham) {
-        List<SanPhamResponse> result = sanPhamService.timKiemTheoTen(tenSanPham);
-        return ResponseEntity.ok(result);
-    }
-
-    @GetMapping("/loc-theo-trang-thai")
-    public ResponseEntity<List<SanPhamResponse>> locTheoTrangThai(@RequestParam Integer trangThai) {
-        List<SanPhamResponse> result = sanPhamService.locTheoTrangThai(trangThai);
-        return ResponseEntity.ok(result);
-    }
-
-    @GetMapping("/loc-theo-thuong-hieu")
-    public ResponseEntity<List<SanPhamResponse>> locTheoThuongHieu(@RequestParam String thuongHieu) {
-        List<SanPhamResponse> result = sanPhamService.locTheoThuongHieu(thuongHieu);
-        return ResponseEntity.ok(result);
     }
 }

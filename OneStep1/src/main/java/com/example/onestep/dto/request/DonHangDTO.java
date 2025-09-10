@@ -15,7 +15,7 @@ public class DonHangDTO {
 
     private Integer id;
 
-    @NotNull(message = "Khách hàng không được để trống")
+
     private Integer khachHangId;
 
     private Integer nhanVienId;
@@ -24,16 +24,12 @@ public class DonHangDTO {
 
     private Integer diaChiId;
 
-    @NotBlank(message = "Số điện thoại không được để trống")
-    @Size(max = 20, message = "Số điện thoại tối đa 20 ký tự")
+
     private String soDienThoai;
 
-    @NotBlank(message = "Họ tên không được để trống")
-    @Size(max = 255, message = "Họ tên tối đa 255 ký tự")
+
     private String hoTen;
 
-    @Email(message = "Email không hợp lệ")
-    @Size(max = 255, message = "Email tối đa 255 ký tự")
     private String email;
 
     private Float tongTienGoc;
@@ -52,19 +48,18 @@ public class DonHangDTO {
 
     private Integer loaiDon;
 
-    @Size(max = 1000, message = "Ghi chú tối đa 1000 ký tự")
+
     private String ghiChu;
 
-    @NotBlank(message = "Mã đơn không được để trống")
-    @Size(max = 10, message = "Mã đơn tối đa 10 ký tự")
+
     private String maDon;
 
     private LocalDate ngayCapNhat;
 
-    @Size(max = 200, message = "Người tạo tối đa 200 ký tự")
+
     private String nguoiTao;
 
-    @Size(max = 200, message = "Người cập nhật tối đa 200 ký tự")
+
     private String nguoiCapNhat;
 
     private Integer daXoa;

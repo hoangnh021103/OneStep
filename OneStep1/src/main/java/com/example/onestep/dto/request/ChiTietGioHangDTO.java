@@ -16,14 +16,13 @@ public class ChiTietGioHangDTO {
 
     private Integer id;
 
-    @NotNull(message = "Giỏ hàng không được để trống")
+
     private Integer gioHangId;
 
-    @NotNull(message = "Chi tiết sản phẩm không được để trống")
+
     private Integer chiTietSanPhamId;
 
-    @NotNull(message = "Số lượng không được để trống")
-    @Min(value = 1, message = "Số lượng tối thiểu là 1")
+
     private Integer soLuong;
 
     private LocalDate ngayCapNhat;

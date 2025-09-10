@@ -15,7 +15,7 @@ public class GioHangDTO {
 
     private Integer id;
 
-    @NotNull(message = "Khách hàng không được để trống")
+
     private Integer khachHangId;
 
     private LocalDate ngayTao;

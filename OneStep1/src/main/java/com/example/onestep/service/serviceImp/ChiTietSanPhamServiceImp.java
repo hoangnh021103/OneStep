@@ -1,10 +1,7 @@
 package com.example.onestep.service.serviceImp;
 
 import com.example.onestep.dto.request.ChiTietSanPhamDTO;
-import com.example.onestep.dto.request.ChiTietSanPhamSearchDTO;
-import com.example.onestep.dto.request.SanPhamDTO;
 import com.example.onestep.dto.response.ChiTietSanPhamResponse;
-import com.example.onestep.dto.response.SanPhamResponse;
 import com.example.onestep.entity.*;
 import com.example.onestep.repository.*;
 import com.example.onestep.service.ChiTietSanPhamService;
@@ -30,17 +27,11 @@ public class ChiTietSanPhamServiceImp implements ChiTietSanPhamService {
     @Autowired
     private SanPhamRepository sanPhamRepository;
 
-    @Autowired
-    private ThuongHieuRepository thuongHieuRepository;
 
-    @Autowired
-    private KieuDangRepository kieuDangRepository;
 
     @Autowired
     private KichCoRepository kichCoRepository;
 
-    @Autowired
-    private ChatLieuRepository chatLieuRepository;
 
     @Autowired
     private MauSacRepository mauSacRepository;
@@ -146,82 +137,6 @@ public class ChiTietSanPhamServiceImp implements ChiTietSanPhamService {
                 .map(entity -> modelMapper.map(entity, ChiTietSanPhamResponse.class));
     }
 
-    @Override
-    public Page<ChiTietSanPhamResponse> timKiemChiTietSanPham(ChiTietSanPhamSearchDTO searchDTO, Pageable pageable) {
-        // Lấy tất cả chi tiết sản phẩm từ database
-        List<ChiTietSanPham> allChiTietSanPham = chiTietSanPhamRepository.findAll();
-        
-        // Lọc theo các tiêu chí
-        List<ChiTietSanPham> filteredList = allChiTietSanPham.stream()
-                .filter(ctsp -> searchDTO.getTenSanPham() == null || 
-                        ctsp.getSanPham().getTenSanPham().toLowerCase().contains(searchDTO.getTenSanPham().toLowerCase()))
-                .filter(ctsp -> searchDTO.getMaCode() == null || 
-                        ctsp.getSanPham().getMaCode().equals(searchDTO.getMaCode()))
-                .filter(ctsp -> searchDTO.getTrangThai() == null || 
-                        ctsp.getTrangThai().equals(searchDTO.getTrangThai()))
-                .filter(ctsp -> searchDTO.getDaXoa() == null || 
-                        ctsp.getDaXoa().equals(searchDTO.getDaXoa()))
-
-                .filter(ctsp -> searchDTO.getKichCoId() == null || 
-                        ctsp.getKichCo().getId().equals(searchDTO.getKichCoId()))
-
-                .filter(ctsp -> searchDTO.getMauSacId() == null || 
-                        ctsp.getMauSac().getId().equals(searchDTO.getMauSacId()))
-                .filter(ctsp -> searchDTO.getGiaMin() == null || 
-                        ctsp.getGiaTien() >= searchDTO.getGiaMin())
-                .filter(ctsp -> searchDTO.getGiaMax() == null || 
-                        ctsp.getGiaTien() <= searchDTO.getGiaMax())
-                .collect(Collectors.toList());
-        
-        // Phân trang thủ công
-        int start = (int) pageable.getOffset();
-        int end = Math.min((start + pageable.getPageSize()), filteredList.size());
-        
-        List<ChiTietSanPham> pageContent = filteredList.subList(start, end);
-        List<ChiTietSanPhamResponse> dtoList = pageContent.stream()
-                .map(ctsp -> modelMapper.map(ctsp, ChiTietSanPhamResponse.class))
-                .collect(Collectors.toList());
-                
-        return new PageImpl<>(dtoList, pageable, filteredList.size());
-    }
-
-    @Override
-    public List<ChiTietSanPhamResponse> timKiemTheoTen(String tenSanPham) {
-        List<ChiTietSanPham> allChiTietSanPham = chiTietSanPhamRepository.findAll();
-        return allChiTietSanPham.stream()
-                .filter(ctsp -> ctsp.getSanPham().getTenSanPham().toLowerCase().contains(tenSanPham.toLowerCase()))
-                .map(ctsp -> modelMapper.map(ctsp, ChiTietSanPhamResponse.class))
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public List<ChiTietSanPhamResponse> locTheoGia(Float giaMin, Float giaMax) {
-        List<ChiTietSanPham> allChiTietSanPham = chiTietSanPhamRepository.findAll();
-        return allChiTietSanPham.stream()
-                .filter(ctsp -> ctsp.getGiaTien() >= giaMin && ctsp.getGiaTien() <= giaMax)
-                .map(ctsp -> modelMapper.map(ctsp, ChiTietSanPhamResponse.class))
-                .collect(Collectors.toList());
-    }
-
-
-
-    @Override
-    public List<ChiTietSanPhamResponse> locTheoMauSac(Integer mauSacId) {
-        List<ChiTietSanPham> allChiTietSanPham = chiTietSanPhamRepository.findAll();
-        return allChiTietSanPham.stream()
-                .filter(ctsp -> ctsp.getMauSac().getId().equals(mauSacId))
-                .map(ctsp -> modelMapper.map(ctsp, ChiTietSanPhamResponse.class))
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public List<ChiTietSanPhamResponse> locTheoKichCo(Integer kichCoId) {
-        List<ChiTietSanPham> allChiTietSanPham = chiTietSanPhamRepository.findAll();
-        return allChiTietSanPham.stream()
-                .filter(ctsp -> ctsp.getKichCo().getId().equals(kichCoId))
-                .map(ctsp -> modelMapper.map(ctsp, ChiTietSanPhamResponse.class))
-                .collect(Collectors.toList());
-    }
 
 
 }

@@ -1,7 +1,6 @@
 package com.example.onestep.controller;
 
 import com.example.onestep.dto.request.ChiTietSanPhamDTO;
-import com.example.onestep.dto.request.ChiTietSanPhamSearchDTO;
 import com.example.onestep.dto.response.ChiTietSanPhamResponse;
 import com.example.onestep.service.ChiTietSanPhamService;
 import jakarta.validation.Valid;
@@ -62,43 +61,6 @@ public class ChiTietSanPhamController {
         return optional.map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
-
-    @PostMapping("/tim-kiem")
-    public ResponseEntity<Page<ChiTietSanPhamResponse>> timKiemChiTietSanPham(
-            @RequestBody ChiTietSanPhamSearchDTO searchDTO,
-            @RequestParam(defaultValue = "0") Integer page,
-            @RequestParam(defaultValue = "10") Integer size) {
-        Pageable pageable = PageRequest.of(page, size);
-        Page<ChiTietSanPhamResponse> result = chiTietSanPhamService.timKiemChiTietSanPham(searchDTO, pageable);
-        return ResponseEntity.ok(result);
-    }
-
-    @GetMapping("/tim-kiem-ten")
-    public ResponseEntity<List<ChiTietSanPhamResponse>> timKiemTheoTen(@RequestParam String tenSanPham) {
-        List<ChiTietSanPhamResponse> result = chiTietSanPhamService.timKiemTheoTen(tenSanPham);
-        return ResponseEntity.ok(result);
-    }
-
-    @GetMapping("/loc-theo-gia")
-    public ResponseEntity<List<ChiTietSanPhamResponse>> locTheoGia(
-            @RequestParam Float giaMin, 
-            @RequestParam Float giaMax) {
-        List<ChiTietSanPhamResponse> result = chiTietSanPhamService.locTheoGia(giaMin, giaMax);
-        return ResponseEntity.ok(result);
-    }
-
-
-    @GetMapping("/loc-theo-mau-sac")
-    public ResponseEntity<List<ChiTietSanPhamResponse>> locTheoMauSac(@RequestParam Integer mauSacId) {
-        List<ChiTietSanPhamResponse> result = chiTietSanPhamService.locTheoMauSac(mauSacId);
-        return ResponseEntity.ok(result);
-    }
-
-    @GetMapping("/loc-theo-kich-co")
-    public ResponseEntity<List<ChiTietSanPhamResponse>> locTheoKichCo(@RequestParam Integer kichCoId) {
-        List<ChiTietSanPhamResponse> result = chiTietSanPhamService.locTheoKichCo(kichCoId);
-        return ResponseEntity.ok(result);
-    }
-
-
 }
+
+

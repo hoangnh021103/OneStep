@@ -21,7 +21,6 @@ public class SanPhamDTO {
 
     private String maCode;
 
-    @Size(max = 1000, message = "Mô tả tối đa 1000 ký tự")
     private String moTa;
 
     private MultipartFile duongDanAnh;
