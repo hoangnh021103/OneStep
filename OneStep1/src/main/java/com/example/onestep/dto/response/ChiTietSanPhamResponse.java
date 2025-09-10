@@ -1,6 +1,11 @@
 package com.example.onestep.dto.response;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 import java.time.LocalDate;
 
@@ -14,19 +19,11 @@ public class ChiTietSanPhamResponse {
 
     private Integer maChiTiet;
 
-    private Integer thuongHieuId;
-
-    private Integer kieuDangId;
-
     private Integer kichCoId;
 
     private Integer sanPhamId;
 
-    private Integer chatLieuId;
-
     private Integer mauSacId;
-
-    private Integer hangSanXuatId;
 
     private String duongDanAnh;
 

@@ -37,11 +37,6 @@ public class SanPham {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "kieu_dang_id", referencedColumnName = "id")
     private KieuDang kieuDang;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "hang_san_xuat_id", referencedColumnName = "id")
-    private ThuongHieu hangSanXuat; // Dùng lại entity ThuongHieu
-
     @Column(name = "duong_dan_anh")
     private String duongDanAnh;
 
