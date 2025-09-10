@@ -16,5 +16,7 @@ public interface ChiTietSanPhamService {
     void delete(Integer id);
     Optional<ChiTietSanPhamResponse> getById(Integer id);
 
+    List<ChiTietSanPhamResponse> getBySanPhamId(Integer sanPhamId);
+
 
 }

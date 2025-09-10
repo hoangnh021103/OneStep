@@ -2,6 +2,8 @@ package com.example.onestep.controller;
 
 import com.example.onestep.dto.request.ChiTietSanPhamDTO;
 import com.example.onestep.dto.response.ChiTietSanPhamResponse;
+import com.example.onestep.entity.ChiTietSanPham;
+import com.example.onestep.repository.ChiTietSanPhamRepository;
 import com.example.onestep.service.ChiTietSanPhamService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +22,8 @@ public class ChiTietSanPhamController {
 
     @Autowired
     private ChiTietSanPhamService chiTietSanPhamService;
+    @Autowired
+    private ChiTietSanPhamRepository chiTietSanPhamRepository;
 
     @GetMapping("/hien-thi")
     public ResponseEntity<List<ChiTietSanPhamResponse>> getAll() {
@@ -58,9 +62,17 @@ public class ChiTietSanPhamController {
     @GetMapping("/{id}")
     public ResponseEntity<ChiTietSanPhamResponse> getById(@PathVariable Integer id) {
         Optional<ChiTietSanPhamResponse> optional = chiTietSanPhamService.getById(id);
-        return optional.map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+        return optional.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
+
+    @GetMapping("/hien-thi-theo-san-pham/{id}")
+    public ResponseEntity<List<ChiTietSanPhamResponse>> getBySanPham(@PathVariable("id") Integer sanPhamId) {
+        List<ChiTietSanPhamResponse> data = chiTietSanPhamService.getBySanPhamId(sanPhamId);
+
+        return ResponseEntity.ok(data);
+    }
+
+
 }
 
 

@@ -16,7 +16,6 @@ public class SanPhamDTO {
 
     private Integer maSanPham;
 
-
     private String tenSanPham;
 
     private String maCode;
@@ -26,6 +25,14 @@ public class SanPhamDTO {
     private MultipartFile duongDanAnh;
 
     private Integer trangThai;
+
+    private Integer thuongHieuId;
+
+    private Integer chatLieuIdv;
+
+    private Integer deGiayId;
+
+    private Integer kieuDangId;
 
     private LocalDate ngayCapNhat;
 

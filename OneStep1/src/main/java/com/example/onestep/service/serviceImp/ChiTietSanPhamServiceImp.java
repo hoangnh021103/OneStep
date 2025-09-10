@@ -137,6 +137,27 @@ public class ChiTietSanPhamServiceImp implements ChiTietSanPhamService {
                 .map(entity -> modelMapper.map(entity, ChiTietSanPhamResponse.class));
     }
 
+    @Override
+    public List<ChiTietSanPhamResponse> getBySanPhamId(Integer sanPhamId) {
+        List<ChiTietSanPham> list = chiTietSanPhamRepository.findBySanPhamId(sanPhamId);
+        System.out.print("list"+list);
+        return list.stream().map(c -> ChiTietSanPhamResponse.builder()
+                .maChiTiet(c.getMaChiTiet())
+                .sanPhamId(c.getSanPham().getMaSanPham())
+                .kichCoId(c.getKichCo().getId())
+                .mauSacId(c.getMauSac().getId())
+                .duongDanAnh(c.getDuongDanAnh())
+                .giaTien(c.getGiaTien())
+                .soLuongTon(c.getSoLuongTon())
+                .trangThai(c.getTrangThai())
+                .tienGiamGia(c.getTienGiamGia())
+                .daXoa(c.getDaXoa())
+                .ngayCapNhat(c.getNgayCapNhat())
+                .nguoiTao(c.getNguoiTao())
+                .nguoiCapNhat(c.getNguoiCapNhat())
+                .build()).toList();
+    }
+
 
 
 }

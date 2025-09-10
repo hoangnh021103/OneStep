@@ -4,8 +4,8 @@ import com.example.onestep.config.cloudinary.CloudinaryUtils;
 import com.example.onestep.dto.request.SanPhamDTO;
 
 import com.example.onestep.dto.response.SanPhamResponse;
-import com.example.onestep.entity.SanPham;
-import com.example.onestep.repository.SanPhamRepository;
+import com.example.onestep.entity.*;
+import com.example.onestep.repository.*;
 import com.example.onestep.service.SanPhamService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +34,18 @@ public class SanPhamServiceImp implements SanPhamService {
     @Autowired
     private SanPhamRepository sanPhamRepository;
 
+    @Autowired
+    private ChatLieuRepository chatLieuRepository;
+
+    @Autowired
+    private KieuDangRepository kieuDangRepository;
+
+    @Autowired
+    private ThuongHieuRepository thuongHieuRepository;
+
+    @Autowired
+    private DeGiayRepository deGiayRepository;
+
     @Override
     public List<SanPhamResponse> getAll() {
         List<SanPham> list = sanPhamRepository.findAll();
@@ -61,6 +73,7 @@ public class SanPhamServiceImp implements SanPhamService {
         SanPham entity = modelMapper.map(dto, SanPham.class);
         entity.setNgayCapNhat(LocalDate.now());
 
+
         // Tạo mã code ngẫu nhiên
         Random random = new Random();
         int number = random.nextInt(10000);
@@ -83,6 +96,22 @@ public class SanPhamServiceImp implements SanPhamService {
         } catch (Exception e) {
             throw new RuntimeException("Lỗi khi tải ảnh lên Cloudinary: " + e.getMessage(), e);
         }
+
+        DeGiay deGiay = deGiayRepository.findById(dto.getDeGiayId()).get();
+
+        entity.setDeGiay(deGiay);
+
+        KieuDang kieuDang = kieuDangRepository.findById(dto.getKieuDangId()).get();
+
+        entity.setKieuDang(kieuDang);
+
+        ThuongHieu thuongHieu = thuongHieuRepository.findById(dto.getThuongHieuId()).get();
+
+        entity.setThuongHieu(thuongHieu);
+
+        ChatLieu chatLieu = chatLieuRepository.findById(dto.getThuongHieuId()).get();
+
+        entity.setChatLieu(chatLieu);
 
         // Lưu vào cơ sở dữ liệu
         SanPham saved = sanPhamRepository.save(entity);
