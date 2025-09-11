@@ -59,6 +59,7 @@ public class ChiTietSanPhamServiceImp implements ChiTietSanPhamService {
 
         // Gán các quan hệ
         entity.setSanPham(sanPhamRepository.findById(dto.getSanPhamId()).orElse(null));
+
         entity.setKichCo(kichCoRepository.findById(dto.getKichCoId()).orElse(null));
 
         entity.setMauSac(mauSacRepository.findById(dto.getMauSacId()).orElse(null));

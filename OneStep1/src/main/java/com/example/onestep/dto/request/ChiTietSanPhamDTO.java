@@ -35,7 +35,6 @@ public class ChiTietSanPhamDTO {
 
     private Integer hangSanXuatId;
 
-    private String duongDanAnh;
 
 
     private Float giaTien;

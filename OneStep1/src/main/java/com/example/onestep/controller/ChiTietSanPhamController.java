@@ -39,7 +39,7 @@ public class ChiTietSanPhamController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<ChiTietSanPhamResponse> add(@RequestBody @Valid ChiTietSanPhamDTO dto) {
+    public ResponseEntity<ChiTietSanPhamResponse> add(ChiTietSanPhamDTO dto) {
         ChiTietSanPhamResponse response = chiTietSanPhamService.add(dto);
         return ResponseEntity.ok(response);
     }
