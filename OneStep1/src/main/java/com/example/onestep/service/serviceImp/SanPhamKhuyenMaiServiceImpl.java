@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class SanPhamKhuyenMaiServiceImpl implements SanPhamKhuyenMaiService {
+
     @Autowired
     private SanPhamKhuyenMaiRepository sanPhamKhuyenMaiRepository;
 
@@ -55,46 +56,53 @@ public class SanPhamKhuyenMaiServiceImpl implements SanPhamKhuyenMaiService {
 
     @Override
     public SanPhamKhuyenMaiResponse add(SanPhamKhuyenMaiDTO dto) {
-        SanPhamKhuyenMai entity = modelMapper.map(dto, SanPhamKhuyenMai.class);
-        
-        // Set SanPham entity
+        SanPhamKhuyenMai entity = new SanPhamKhuyenMai();
+
+        // Liên kết sản phẩm
         if (dto.getSanPhamId() != null) {
-            Optional<SanPham> sanPham = sanPhamRepository.findById(dto.getSanPhamId());
-            sanPham.ifPresent(entity::setSanPham);
+            SanPham sanPham = sanPhamRepository.findById(dto.getSanPhamId())
+                    .orElseThrow(() -> new RuntimeException("Sản phẩm không tồn tại"));
+            entity.setSanPham(sanPham);
         }
-        
-        // Set Voucher entity
+
+        // Liên kết voucher
         if (dto.getVoucherId() != null) {
-            Optional<Voucher> voucher = voucherRepository.findById(dto.getVoucherId());
-            voucher.ifPresent(entity::setVoucher);
+            Voucher voucher = voucherRepository.findById(dto.getVoucherId())
+                    .orElseThrow(() -> new RuntimeException("Voucher không tồn tại"));
+            entity.setVoucher(voucher);
         }
-        
+
+        modelMapper.map(dto, entity);
         entity.setNgayCapNhat(LocalDate.now());
         entity.setDaXoa(0);
+
         SanPhamKhuyenMai saved = sanPhamKhuyenMaiRepository.save(entity);
         return modelMapper.map(saved, SanPhamKhuyenMaiResponse.class);
     }
 
     @Override
     public SanPhamKhuyenMaiResponse update(Integer id, SanPhamKhuyenMaiDTO dto) {
-        Optional<SanPhamKhuyenMai> optional = sanPhamKhuyenMaiRepository.findById(id);
-        if (optional.isEmpty() || optional.get().getDaXoa() == 1) return null;
+        SanPhamKhuyenMai entity = sanPhamKhuyenMaiRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy khuyến mãi sản phẩm"));
 
-        SanPhamKhuyenMai entity = optional.get();
+        if (entity.getDaXoa() == 1) {
+            throw new RuntimeException("Bản ghi đã bị xóa");
+        }
+
         modelMapper.map(dto, entity);
-        
-        // Update SanPham entity
+
         if (dto.getSanPhamId() != null) {
-            Optional<SanPham> sanPham = sanPhamRepository.findById(dto.getSanPhamId());
-            sanPham.ifPresent(entity::setSanPham);
+            SanPham sanPham = sanPhamRepository.findById(dto.getSanPhamId())
+                    .orElseThrow(() -> new RuntimeException("Sản phẩm không tồn tại"));
+            entity.setSanPham(sanPham);
         }
-        
-        // Update Voucher entity
+
         if (dto.getVoucherId() != null) {
-            Optional<Voucher> voucher = voucherRepository.findById(dto.getVoucherId());
-            voucher.ifPresent(entity::setVoucher);
+            Voucher voucher = voucherRepository.findById(dto.getVoucherId())
+                    .orElseThrow(() -> new RuntimeException("Voucher không tồn tại"));
+            entity.setVoucher(voucher);
         }
-        
+
         entity.setNgayCapNhat(LocalDate.now());
 
         SanPhamKhuyenMai updated = sanPhamKhuyenMaiRepository.save(entity);
@@ -103,13 +111,13 @@ public class SanPhamKhuyenMaiServiceImpl implements SanPhamKhuyenMaiService {
 
     @Override
     public void delete(Integer id) {
-        Optional<SanPhamKhuyenMai> optional = sanPhamKhuyenMaiRepository.findById(id);
-        if (optional.isPresent() && optional.get().getDaXoa() == 0) {
-            SanPhamKhuyenMai entity = optional.get();
-            entity.setDaXoa(1);
-            entity.setNgayCapNhat(LocalDate.now());
-            sanPhamKhuyenMaiRepository.save(entity);
-        }
+        sanPhamKhuyenMaiRepository.findById(id).ifPresent(entity -> {
+            if (entity.getDaXoa() == 0) {
+                entity.setDaXoa(1);
+                entity.setNgayCapNhat(LocalDate.now());
+                sanPhamKhuyenMaiRepository.save(entity);
+            }
+        });
     }
 
     @Override
@@ -122,7 +130,9 @@ public class SanPhamKhuyenMaiServiceImpl implements SanPhamKhuyenMaiService {
     @Override
     public List<SanPhamKhuyenMaiResponse> getBySanPhamId(Integer sanPhamId) {
         return sanPhamKhuyenMaiRepository.findAll().stream()
-                .filter(spkm -> spkm.getDaXoa() == 0 && spkm.getSanPham() != null && spkm.getSanPham().getMaSanPham().equals(sanPhamId))
+                .filter(spkm -> spkm.getDaXoa() == 0
+                        && spkm.getSanPham() != null
+                        && spkm.getSanPham().getMaSanPham().equals(sanPhamId))
                 .map(spkm -> modelMapper.map(spkm, SanPhamKhuyenMaiResponse.class))
                 .collect(Collectors.toList());
     }
@@ -130,7 +140,9 @@ public class SanPhamKhuyenMaiServiceImpl implements SanPhamKhuyenMaiService {
     @Override
     public List<SanPhamKhuyenMaiResponse> getByVoucherId(Integer voucherId) {
         return sanPhamKhuyenMaiRepository.findAll().stream()
-                .filter(spkm -> spkm.getDaXoa() == 0 && spkm.getVoucher() != null && spkm.getVoucher().getId().equals(voucherId))
+                .filter(spkm -> spkm.getDaXoa() == 0
+                        && spkm.getVoucher() != null
+                        && spkm.getVoucher().getId().equals(voucherId))
                 .map(spkm -> modelMapper.map(spkm, SanPhamKhuyenMaiResponse.class))
                 .collect(Collectors.toList());
     }

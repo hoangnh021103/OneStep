@@ -17,6 +17,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/san-pham-khuyen-mai")
 public class SanPhamKhuyenMaiController {
+
     @Autowired
     private SanPhamKhuyenMaiService sanPhamKhuyenMaiService;
 
@@ -38,7 +39,8 @@ public class SanPhamKhuyenMaiController {
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<SanPhamKhuyenMaiResponse> update(@PathVariable Integer id, @RequestBody @Valid SanPhamKhuyenMaiDTO dto) {
+    public ResponseEntity<SanPhamKhuyenMaiResponse> update(@PathVariable Integer id,
+                                                           @RequestBody @Valid SanPhamKhuyenMaiDTO dto) {
         SanPhamKhuyenMaiResponse updated = sanPhamKhuyenMaiService.update(id, dto);
         if (updated == null) {
             return ResponseEntity.notFound().build();
