@@ -34,8 +34,6 @@ public class KhachHang {
     @Column(name = "ngay_sinh")
     private LocalDate ngaySinh;
 
-    @Column(name = "mat_khau", nullable = false)
-    private String matKhau;
 
     @Column(name = "ngay_tao")
     private LocalDate ngayTao;

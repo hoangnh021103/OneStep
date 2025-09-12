@@ -28,7 +28,7 @@ public class NhanVien {
     @Column(name = "email", length = 255, unique = true)
     private String email;
 
-    @Column(name = "mat_khau", length = 255, nullable = false)
+    @Column(name = "mat_khau")
     private String matKhau;
 
     @Column(name = "so_dien_thoai", length = 20)

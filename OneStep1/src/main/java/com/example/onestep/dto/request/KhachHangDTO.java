@@ -30,8 +30,6 @@ public class KhachHangDTO {
     private LocalDate ngaySinh;
 
 
-    private String matKhau;
-
     private LocalDate ngayTao;
 
     private LocalDate ngayCapNhat;

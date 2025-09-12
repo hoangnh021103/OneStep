@@ -16,7 +16,7 @@ public class KichCoDTO {
     private Integer id;
 
 
-    private Double soSize;
+    private String ten;
 
     private Integer trangThai;
 

@@ -15,7 +15,6 @@ public class KhachHangResponse {
     private String gioiTinh;
     private String email;
     private String soDienThoai;
-    private String urlAnh;
     private LocalDate ngayTao;
     private LocalDate ngayCapNhat;
     private String nguoiTao;
