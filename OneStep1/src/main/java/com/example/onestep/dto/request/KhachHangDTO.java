@@ -24,11 +24,9 @@ public class KhachHangDTO {
 
     private String so_dien_thoai;
 
-
     private String gioiTinh;
 
     private LocalDate ngaySinh;
-
 
     private LocalDate ngayTao;
 

@@ -16,7 +16,6 @@ public class NhanVienResponse {
     private String email;
     private String soDienThoai;
     private String diaChi;
-    private String urlAnh;
     private Integer vaiTroId;
     private LocalDate ngayTao;
     private LocalDate ngayCapNhat;

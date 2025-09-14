@@ -28,17 +28,12 @@ public class NhanVien {
     @Column(name = "email", length = 255, unique = true)
     private String email;
 
-    @Column(name = "mat_khau")
-    private String matKhau;
 
     @Column(name = "so_dien_thoai", length = 20)
     private String soDienThoai;
 
     @Column(name = "dia_chi", length = 500)
     private String diaChi;
-
-    @Column(name = "url_anh", columnDefinition = "TEXT")
-    private String urlAnh;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "vai_tro_id")

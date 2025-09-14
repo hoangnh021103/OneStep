@@ -23,8 +23,7 @@ public class KhachHang {
 
     @Column(name = "email")
     private String email;
-    @Column(name = "url_anh")
-    private String urlAnh;
+
     @Column(name = "so_dien_thoai")
     private String soDienThoai;
 
@@ -33,7 +32,6 @@ public class KhachHang {
 
     @Column(name = "ngay_sinh")
     private LocalDate ngaySinh;
-
 
     @Column(name = "ngay_tao")
     private LocalDate ngayTao;

@@ -28,15 +28,10 @@ public class NhanVienDTO {
     private String email;
 
 
-    private String matKhau;
-
-
     private String soDienThoai;
 
 
     private String diaChi;
-
-    private String urlAnh; // TEXT nên không giới hạn độ dài ở DTO
 
 
     private Integer vaiTroId; // Truyền ID của VaiTro, tránh truyền cả object
