@@ -1,83 +1,109 @@
 package com.example.onestep.service.serviceImp;
 
 import com.example.onestep.dto.request.NhanVienDTO;
-import com.example.onestep.dto.request.SanPhamDTO;
-import com.example.onestep.dto.response.KhachHangResponse;
 import com.example.onestep.dto.response.NhanVienResponse;
-import com.example.onestep.dto.response.SanPhamResponse;
-import com.example.onestep.entity.KhachHang;
 import com.example.onestep.entity.NhanVien;
-import com.example.onestep.entity.SanPham;
-import com.example.onestep.repository.KhachHangRepository;
+import com.example.onestep.entity.VaiTro;
 import com.example.onestep.repository.NhanVienRepository;
 import com.example.onestep.service.NhanVienService;
-import org.modelmapper.ModelMapper;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 public class NhanVienServicelmp implements NhanVienService {
+
     @Autowired
     private NhanVienRepository nhanVienRepository;
 
-    @Autowired
-    private ModelMapper modelMapper;
+    private NhanVienResponse mapToResponse(NhanVien nv) {
+        NhanVienResponse res = new NhanVienResponse();
+        res.setId(nv.getId());
+        res.setHoTen(nv.getHoTen());
+        res.setNgaySinh(nv.getNgaySinh());
+        res.setGioiTinh(nv.getGioiTinh());
+        res.setEmail(nv.getEmail());
+        res.setSoDienThoai(nv.getSoDienThoai());
+        res.setDiaChi(nv.getDiaChi());
+        res.setVaiTro(nv.getVaiTro() != null ? nv.getVaiTro().getTenVaiTro() : null);
+        res.setNgayTao(nv.getNgayTao());
+        res.setNgayCapNhat(nv.getNgayCapNhat());
+        res.setDaXoa(nv.getDaXoa());
+        return res;
+    }
 
     @Override
     public List<NhanVienResponse> getAll() {
-        return nhanVienRepository.findAll().stream()
-                .map(nv -> modelMapper.map(nv, NhanVienResponse.class))
-                .collect(Collectors.toList());
+        return nhanVienRepository.findAll()
+                .stream().map(this::mapToResponse).collect(Collectors.toList());
     }
 
     @Override
     public Page<NhanVienResponse> phanTrang(Pageable pageable) {
-        Page<NhanVien> page = nhanVienRepository.findAll(pageable);
-        List<NhanVienResponse> dtoList = page.getContent().stream()
-                .map(nv -> modelMapper.map(nv, NhanVienResponse.class))
-                .collect(Collectors.toList());
-        return new PageImpl<>(dtoList, pageable, page.getTotalElements());
-    }
-
-    @Override
-    public NhanVienResponse add(NhanVienDTO dto) {
-        NhanVien entity = modelMapper.map(dto, NhanVien.class);
-        entity.setNgayCapNhat(LocalDate.now());
-        NhanVien saved = nhanVienRepository.save(entity);
-        return modelMapper.map(saved, NhanVienResponse.class);
-    }
-
-    @Override
-    public NhanVienResponse update(Integer id, NhanVienDTO dto) {
-        Optional<NhanVien> optional = nhanVienRepository.findById(id);
-        if (optional.isEmpty()) return null;
-
-        NhanVien entity = optional.get();
-        modelMapper.map(dto, entity);
-        entity.setNgayCapNhat(LocalDate.now());
-
-        NhanVien updated = nhanVienRepository.save(entity);
-        return modelMapper.map(updated, NhanVienResponse.class);
-    }
-
-    @Override
-    public void delete(Integer id) {
-        if (nhanVienRepository.existsById(id)) {
-            nhanVienRepository.deleteById(id);
-        }
+        return nhanVienRepository.findAll(pageable).map(this::mapToResponse);
     }
 
     @Override
     public Optional<NhanVienResponse> getById(Integer id) {
-        return nhanVienRepository.findById(id)
-                .map(entity -> modelMapper.map(entity, NhanVienResponse.class));
+        return nhanVienRepository.findById(id).map(this::mapToResponse);
+    }
+
+    @Override
+    public NhanVienResponse add(NhanVienDTO dto) {
+        NhanVien nv = new NhanVien();
+        nv.setHoTen(dto.getHoTen());
+        nv.setNgaySinh(dto.getNgaySinh());
+        nv.setGioiTinh(dto.getGioiTinh());
+        nv.setEmail(dto.getEmail());
+        nv.setSoDienThoai(dto.getSoDienThoai());
+        nv.setDiaChi(dto.getDiaChi());
+        nv.setNgayTao(LocalDateTime.now());
+        nv.setNgayCapNhat(LocalDateTime.now());
+        nv.setDaXoa(false);
+
+        if (dto.getVaiTroId() != null) {
+            VaiTro vaiTro = new VaiTro();
+            vaiTro.setId(dto.getVaiTroId());
+            nv.setVaiTro(vaiTro);
+        }
+
+        return mapToResponse(nhanVienRepository.save(nv));
+    }
+
+    @Override
+    public NhanVienResponse update(Integer id, NhanVienDTO dto) {
+        Optional<NhanVien> opt = nhanVienRepository.findById(id);
+        if (opt.isEmpty()) {
+            throw new EntityNotFoundException("Không tìm thấy nhân viên với id " + id);
+        }
+
+        NhanVien nv = opt.get();
+        nv.setHoTen(dto.getHoTen());
+        nv.setNgaySinh(dto.getNgaySinh());
+        nv.setGioiTinh(dto.getGioiTinh());
+        nv.setEmail(dto.getEmail());
+        nv.setSoDienThoai(dto.getSoDienThoai());
+        nv.setDiaChi(dto.getDiaChi());
+        nv.setNgayCapNhat(LocalDateTime.now());
+
+        if (dto.getVaiTroId() != null) {
+            VaiTro vaiTro = new VaiTro();
+            vaiTro.setId(dto.getVaiTroId());
+            nv.setVaiTro(vaiTro);
+        }
+
+        return mapToResponse(nhanVienRepository.save(nv));
+    }
+
+    @Override
+    public void delete(Integer id) {
+        nhanVienRepository.deleteById(id);
     }
 }

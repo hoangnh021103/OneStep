@@ -1,13 +1,11 @@
 package com.example.onestep.dto.response;
 
-import lombok.*;
-import java.time.LocalDate;
+import lombok.Data;
 
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
+@Data
 public class NhanVienResponse {
     private Integer id;
     private String hoTen;
@@ -16,10 +14,8 @@ public class NhanVienResponse {
     private String email;
     private String soDienThoai;
     private String diaChi;
-    private Integer vaiTroId;
-    private LocalDate ngayTao;
-    private LocalDate ngayCapNhat;
-    private String nguoiTao;
-    private String nguoiCapNhat;
-    private Integer daXoa;
+    private String vaiTro;
+    private LocalDateTime ngayTao;
+    private LocalDateTime ngayCapNhat;
+    private Boolean daXoa;
 }

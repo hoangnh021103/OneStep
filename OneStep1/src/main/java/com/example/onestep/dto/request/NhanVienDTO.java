@@ -1,50 +1,28 @@
 package com.example.onestep.dto.request;
 
-import jakarta.validation.constraints.*;
-import lombok.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+import lombok.Data;
 
 import java.time.LocalDate;
 
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
-@Builder
-@ToString
+@Data
 public class NhanVienDTO {
-
-    private Integer id;
-
-
+    @NotBlank
     private String hoTen;
-
 
     private LocalDate ngaySinh;
 
-
     private String gioiTinh;
 
-
+    @Email
     private String email;
 
-
+    @Size(max = 20)
     private String soDienThoai;
-
 
     private String diaChi;
 
-
-    private Integer vaiTroId; // Truyền ID của VaiTro, tránh truyền cả object
-
-    private LocalDate ngayTao;
-
-    private LocalDate ngayCapNhat;
-
-    @Size(max = 255)
-    private String nguoiTao;
-
-    @Size(max = 255)
-    private String nguoiCapNhat;
-
-    private Integer daXoa;
+    private Integer vaiTroId;
 }

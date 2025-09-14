@@ -2,7 +2,9 @@ package com.example.onestep.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "NhanVien")
@@ -12,6 +14,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Builder
 public class NhanVien {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -28,7 +31,6 @@ public class NhanVien {
     @Column(name = "email", length = 255, unique = true)
     private String email;
 
-
     @Column(name = "so_dien_thoai", length = 20)
     private String soDienThoai;
 
@@ -40,10 +42,10 @@ public class NhanVien {
     private VaiTro vaiTro;
 
     @Column(name = "ngay_tao")
-    private LocalDate ngayTao;
+    private LocalDateTime ngayTao;
 
     @Column(name = "ngay_cap_nhat")
-    private LocalDate ngayCapNhat;
+    private LocalDateTime ngayCapNhat;
 
     @Column(name = "nguoi_tao", length = 255)
     private String nguoiTao;
@@ -52,5 +54,5 @@ public class NhanVien {
     private String nguoiCapNhat;
 
     @Column(name = "da_xoa")
-    private Integer daXoa;
+    private Boolean daXoa;
 }
