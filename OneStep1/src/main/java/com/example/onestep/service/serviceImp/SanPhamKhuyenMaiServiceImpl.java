@@ -72,7 +72,9 @@ public class SanPhamKhuyenMaiServiceImpl implements SanPhamKhuyenMaiService {
             entity.setVoucher(voucher);
         }
 
-        modelMapper.map(dto, entity);
+        // Map thủ công các trường khác (KHÔNG map toàn bộ bằng modelMapper để tránh override id)
+        entity.setNguoiTao(dto.getNguoiTao());
+        entity.setNguoiCapNhat(dto.getNguoiCapNhat());
         entity.setNgayCapNhat(LocalDate.now());
         entity.setDaXoa(0);
 
@@ -89,21 +91,23 @@ public class SanPhamKhuyenMaiServiceImpl implements SanPhamKhuyenMaiService {
             throw new RuntimeException("Bản ghi đã bị xóa");
         }
 
-        modelMapper.map(dto, entity);
+        // Cập nhật field cơ bản
+        entity.setNguoiCapNhat(dto.getNguoiCapNhat());
+        entity.setNgayCapNhat(LocalDate.now());
 
+        // Cập nhật liên kết sản phẩm
         if (dto.getSanPhamId() != null) {
             SanPham sanPham = sanPhamRepository.findById(dto.getSanPhamId())
                     .orElseThrow(() -> new RuntimeException("Sản phẩm không tồn tại"));
             entity.setSanPham(sanPham);
         }
 
+        // Cập nhật liên kết voucher
         if (dto.getVoucherId() != null) {
             Voucher voucher = voucherRepository.findById(dto.getVoucherId())
                     .orElseThrow(() -> new RuntimeException("Voucher không tồn tại"));
             entity.setVoucher(voucher);
         }
-
-        entity.setNgayCapNhat(LocalDate.now());
 
         SanPhamKhuyenMai updated = sanPhamKhuyenMaiRepository.save(entity);
         return modelMapper.map(updated, SanPhamKhuyenMaiResponse.class);

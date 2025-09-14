@@ -23,7 +23,6 @@ public class SanPhamKhuyenMaiDTO {
 
     private LocalDate ngayCapNhat;
 
-
     private String nguoiTao;
 
 
