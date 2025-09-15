@@ -32,7 +32,7 @@ public class NhanVienServicelmp implements NhanVienService {
         res.setEmail(nv.getEmail());
         res.setSoDienThoai(nv.getSoDienThoai());
         res.setDiaChi(nv.getDiaChi());
-        res.setVaiTro(nv.getVaiTroId() != null ? nv.getVaiTroId().getTenVaiTro() : null);
+        res.setVaiTro(nv.getVaiTro() != null ? nv.getVaiTro().getTenVaiTro() : null);
         res.setNgayTao(nv.getNgayTao());
         res.setNgayCapNhat(nv.getNgayCapNhat());
         res.setDaXoa(nv.getDaXoa());
@@ -71,7 +71,7 @@ public class NhanVienServicelmp implements NhanVienService {
         if (dto.getVaiTroId() != null) {
             VaiTro vaiTro = new VaiTro();
             vaiTro.setId(dto.getVaiTroId());
-            nv.setVaiTroId(vaiTro);
+            nv.setVaiTro(vaiTro);
         }
 
         return mapToResponse(nhanVienRepository.save(nv));
@@ -96,7 +96,7 @@ public class NhanVienServicelmp implements NhanVienService {
         if (dto.getVaiTroId() != null) {
             VaiTro vaiTro = new VaiTro();
             vaiTro.setId(dto.getVaiTroId());
-            nv.setVaiTroId(vaiTro);
+            nv.setVaiTro(vaiTro);
         }
 
         return mapToResponse(nhanVienRepository.save(nv));
@@ -104,6 +104,13 @@ public class NhanVienServicelmp implements NhanVienService {
 
     @Override
     public void delete(Integer id) {
-        nhanVienRepository.deleteById(id);
+        Optional<NhanVien> opt = nhanVienRepository.findById(id);
+        if (opt.isEmpty()) {
+            throw new EntityNotFoundException("Không tìm thấy nhân viên với id " + id);
+        }
+        NhanVien nv = opt.get();
+        nv.setDaXoa(true); // xóa mềm
+        nv.setNgayCapNhat(LocalDateTime.now());
+        nhanVienRepository.save(nv);
     }
 }

@@ -24,5 +24,5 @@ public class NhanVienDTO {
 
     private String diaChi;
 
-    private Integer vaiTroId;
+    private Integer vaiTroId; // sửa lại tên cho đồng bộ với service
 }
