@@ -22,10 +22,11 @@ public class KhachHangDTO {
     private String email;
 
 
-    private String so_dien_thoai;
+    private String soDienThoai;
 
     private String gioiTinh;
 
+    @Past(message = "Ngày sinh phải nhỏ hơn ngày hiện tại")
     private LocalDate ngaySinh;
 
     private LocalDate ngayTao;
