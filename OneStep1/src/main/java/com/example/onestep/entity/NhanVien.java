@@ -39,7 +39,7 @@ public class NhanVien {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "vai_tro_id")
-    private VaiTro vaiTro;
+    private VaiTro vaiTroId;
 
     @Column(name = "ngay_tao")
     private LocalDateTime ngayTao;

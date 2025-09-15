@@ -32,7 +32,7 @@ public class NhanVienServicelmp implements NhanVienService {
         res.setEmail(nv.getEmail());
         res.setSoDienThoai(nv.getSoDienThoai());
         res.setDiaChi(nv.getDiaChi());
-        res.setVaiTro(nv.getVaiTro() != null ? nv.getVaiTro().getTenVaiTro() : null);
+        res.setVaiTro(nv.getVaiTroId() != null ? nv.getVaiTroId().getTenVaiTro() : null);
         res.setNgayTao(nv.getNgayTao());
         res.setNgayCapNhat(nv.getNgayCapNhat());
         res.setDaXoa(nv.getDaXoa());
@@ -71,7 +71,7 @@ public class NhanVienServicelmp implements NhanVienService {
         if (dto.getVaiTroId() != null) {
             VaiTro vaiTro = new VaiTro();
             vaiTro.setId(dto.getVaiTroId());
-            nv.setVaiTro(vaiTro);
+            nv.setVaiTroId(vaiTro);
         }
 
         return mapToResponse(nhanVienRepository.save(nv));
@@ -96,7 +96,7 @@ public class NhanVienServicelmp implements NhanVienService {
         if (dto.getVaiTroId() != null) {
             VaiTro vaiTro = new VaiTro();
             vaiTro.setId(dto.getVaiTroId());
-            nv.setVaiTro(vaiTro);
+            nv.setVaiTroId(vaiTro);
         }
 
         return mapToResponse(nhanVienRepository.save(nv));
