@@ -5,6 +5,7 @@ import com.example.onestep.dto.response.NhanVienResponse;
 import com.example.onestep.entity.NhanVien;
 import com.example.onestep.entity.VaiTro;
 import com.example.onestep.repository.NhanVienRepository;
+import com.example.onestep.repository.VaiTroRepository;
 import com.example.onestep.service.NhanVienService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,9 +20,11 @@ import java.util.stream.Collectors;
 
 @Service
 public class NhanVienServicelmp implements NhanVienService {
-
     @Autowired
     private NhanVienRepository nhanVienRepository;
+
+    @Autowired
+    private VaiTroRepository vaiTroRepository;
 
     private NhanVienResponse mapToResponse(NhanVien nv) {
         NhanVienResponse res = new NhanVienResponse();
@@ -69,8 +72,8 @@ public class NhanVienServicelmp implements NhanVienService {
         nv.setDaXoa(false);
 
         if (dto.getVaiTroId() != null) {
-            VaiTro vaiTro = new VaiTro();
-            vaiTro.setId(dto.getVaiTroId());
+            VaiTro vaiTro = vaiTroRepository.findById(dto.getVaiTroId())
+                    .orElseThrow(() -> new EntityNotFoundException("Không tìm thấy vai trò với id " + dto.getVaiTroId()));
             nv.setVaiTro(vaiTro);
         }
 
@@ -94,8 +97,8 @@ public class NhanVienServicelmp implements NhanVienService {
         nv.setNgayCapNhat(LocalDateTime.now());
 
         if (dto.getVaiTroId() != null) {
-            VaiTro vaiTro = new VaiTro();
-            vaiTro.setId(dto.getVaiTroId());
+            VaiTro vaiTro = vaiTroRepository.findById(dto.getVaiTroId())
+                    .orElseThrow(() -> new EntityNotFoundException("Không tìm thấy vai trò với id " + dto.getVaiTroId()));
             nv.setVaiTro(vaiTro);
         }
 
