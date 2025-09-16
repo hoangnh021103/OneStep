@@ -107,13 +107,8 @@ public class NhanVienServicelmp implements NhanVienService {
 
     @Override
     public void delete(Integer id) {
-        Optional<NhanVien> opt = nhanVienRepository.findById(id);
-        if (opt.isEmpty()) {
-            throw new EntityNotFoundException("Không tìm thấy nhân viên với id " + id);
+        if (nhanVienRepository.existsById(id)) {
+            nhanVienRepository.deleteById(id);
         }
-        NhanVien nv = opt.get();
-        nv.setDaXoa(true); // xóa mềm
-        nv.setNgayCapNhat(LocalDateTime.now());
-        nhanVienRepository.save(nv);
     }
 }

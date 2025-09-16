@@ -15,4 +15,5 @@ public interface NhanVienService {
     NhanVienResponse add(NhanVienDTO dto);
     NhanVienResponse update(Integer id, NhanVienDTO dto);
     void delete(Integer id);
+
 }
