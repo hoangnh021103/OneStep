@@ -1,21 +1,9 @@
 ﻿
-
 --------------------------------------------------------------------------------
--- 1. BẢNG LOOKUP / DANH MỤC
+-- 1. BẢNG LOOKUP / DANH MỤC (KHÔNG CÓ KIỂU DÁNG)
 --------------------------------------------------------------------------------
 -- Bảng ThuongHieu
 CREATE TABLE ThuongHieu (
-    id INT IDENTITY(1,1) PRIMARY KEY,
-    ten NVARCHAR(255) NOT NULL,
-    trang_thai INT,
-    ngay_cap_nhat DATE,
-    nguoi_tao NVARCHAR(255),
-    nguoi_cap_nhat NVARCHAR(255),
-    da_xoa TINYINT
-);
-
--- Bảng KieuDang
-CREATE TABLE KieuDang (
     id INT IDENTITY(1,1) PRIMARY KEY,
     ten NVARCHAR(255) NOT NULL,
     trang_thai INT,
@@ -111,9 +99,9 @@ CREATE TABLE ChatLieu (
 GO
 
 --------------------------------------------------------------------------------
--- 2. BẢNG SẢN PHẨM & CHI TIẾT SẢN PHẨM
+-- 2. BẢNG SẢN PHẨM & CHI TIẾT SẢN PHẨM (KHÔNG CÓ KIEU_DANG_ID)
 --------------------------------------------------------------------------------
--- Bảng SanPham
+-- Bảng SanPham (Đã loại bỏ kieu_dang_id)
 CREATE TABLE SanPham (
     ma_san_pham INT IDENTITY(1,1) PRIMARY KEY,
     ten_san_pham NVARCHAR(255) NOT NULL,
@@ -122,7 +110,6 @@ CREATE TABLE SanPham (
     thuong_hieu_id INT NOT NULL REFERENCES ThuongHieu(id),
     chat_lieu_id INT NOT NULL REFERENCES ChatLieu(id),
     de_giay_id INT NOT NULL REFERENCES DeGiay(id),
-    kieu_dang_id INT NOT NULL REFERENCES KieuDang(id),
     duong_dan_anh NVARCHAR(255),
     trang_thai INT,
     ngay_cap_nhat DATE,
@@ -376,7 +363,7 @@ CREATE TABLE ChiTietPhieuTraHang (
 GO
 
 --------------------------------------------------------------------------------
--- 11. DỮ LIỆU MẪU CHO CÁC BẢNG LOOKUP / DANH MỤC
+-- 11. DỮ LIỆU MẪU CHO CÁC BẢNG LOOKUP / DANH MỤC (KHÔNG CÓ KIỂU DÁNG)
 --------------------------------------------------------------------------------
 INSERT INTO ThuongHieu (ten, trang_thai, ngay_cap_nhat, nguoi_tao, nguoi_cap_nhat, da_xoa) VALUES
 (N'Nike', 1, '2025-06-01', N'admin', N'admin', 0),
@@ -384,13 +371,6 @@ INSERT INTO ThuongHieu (ten, trang_thai, ngay_cap_nhat, nguoi_tao, nguoi_cap_nha
 (N'Puma', 1, '2025-06-01', N'admin', N'admin', 0),
 (N'Reebok', 1, '2025-06-01', N'admin', N'admin', 0),
 (N'New Balance', 1, '2025-06-01', N'admin', N'admin', 0);
-
-INSERT INTO KieuDang (ten, trang_thai, ngay_cap_nhat, nguoi_tao, nguoi_cap_nhat, da_xoa) VALUES
-(N'Sneaker', 1, '2025-06-02', N'admin', N'admin', 0),
-(N'Thể Thao', 1, '2025-06-02', N'admin', N'admin', 0),
-(N'Casual', 1, '2025-06-02', N'admin', N'admin', 0),
-(N'Running', 1, '2025-06-02', N'admin', N'admin', 0),
-(N'Basketball', 1, '2025-06-02', N'admin', N'admin', 0);
 
 INSERT INTO KichCo (ten, trang_thai, ngay_cap_nhat, nguoi_tao, nguoi_cap_nhat, da_xoa) VALUES
 (N'38', 1, '2025-06-03', N'admin', N'admin', 0),
@@ -443,14 +423,14 @@ INSERT INTO PhuongThucVanChuyen (ten, mo_ta, ngay_cap_nhat, nguoi_tao, nguoi_cap
 GO
 
 --------------------------------------------------------------------------------
--- 12. DỮ LIỆU MẪU CHO SẢN PHẨM & CHI TIẾT SẢN PHẨM
+-- 12. DỮ LIỆU MẪU CHO SẢN PHẨM & CHI TIẾT SẢN PHẨM (KHÔNG CÓ KIEU_DANG_ID)
 --------------------------------------------------------------------------------
-INSERT INTO SanPham (ten_san_pham, ma_code, mo_ta, thuong_hieu_id, chat_lieu_id, de_giay_id, kieu_dang_id, duong_dan_anh, trang_thai, ngay_cap_nhat, nguoi_tao, nguoi_cap_nhat, da_xoa) VALUES
-(N'Giày Converse Sneaker', N'CONV-01', N'Giày sneaker Converse phong cách cổ điển', 4, 5, 1, 1,N'https://drake.vn/image/catalog/H%C3%ACnh%20content/gi%C3%A0y-sneaker-converse/giay-sneaker-converse-09.jpg', 1, '2025-06-08', N'admin', N'admin', 0),
-(N'Giày Adidas Ultraboost', N'AD-UB-20', N'Giày chạy bộ êm ái', 2, 2, 2, 4,N'https://bizweb.dktcdn.net/100/413/756/products/image-1702894353567.png?v=1730995459190', 1, '2025-06-08', N'admin', N'admin', 0),
-(N'Giày Nike Court Vision Mid', N'NIKE-CV-MID', N'Giày Nike phối màu Smoke Grey', 1, 3, 3, 3,  N'https://trungsneaker.com/wp-content/uploads/2022/12/giay-nike-court-vision-mid-smoke-grey-dn3577-002-44-1020x680.jpg', 1, '2025-06-08', N'admin', N'admin', 0),
-(N'Giày Vans Old Skool', N'VANS-OS-01', N'Giày trượt ván cổ điển đen trắng', 5, 5, 4, 1,  N'https://bizweb.dktcdn.net/100/140/774/products/vans-old-skool-black-white-vn000d3hy28-3.jpg?v=1625905150880', 1, '2025-06-08', N'admin', N'admin', 0),
-(N'Giày Puma Speedcat OG', N'PUMA-SC-01', N'Giày Puma Speedcat màu xanh light blue', 3, 2, 5, 1, N'https://sneakerdaily.vn/wp-content/uploads/2024/10/Giay-PUMA-Speedcat-OG-Team-Light-Blue-398847-01.jpg', 1, '2025-06-08', N'admin', N'admin', 0);
+INSERT INTO SanPham (ten_san_pham, ma_code, mo_ta, thuong_hieu_id, chat_lieu_id, de_giay_id, duong_dan_anh, trang_thai, ngay_cap_nhat, nguoi_tao, nguoi_cap_nhat, da_xoa) VALUES
+(N'Giày Converse Sneaker', N'CONV-01', N'Giày sneaker Converse phong cách cổ điển', 4, 5, 1,N'https://drake.vn/image/catalog/H%C3%ACnh%20content/gi%C3%A0y-sneaker-converse/giay-sneaker-converse-09.jpg', 1, '2025-06-08', N'admin', N'admin', 0),
+(N'Giày Adidas Ultraboost', N'AD-UB-20', N'Giày chạy bộ êm ái', 2, 2, 2,N'https://bizweb.dktcdn.net/100/413/756/products/image-1702894353567.png?v=1730995459190', 1, '2025-06-08', N'admin', N'admin', 0),
+(N'Giày Nike Court Vision Mid', N'NIKE-CV-MID', N'Giày Nike phối màu Smoke Grey', 1, 3, 3, N'https://trungsneaker.com/wp-content/uploads/2022/12/giay-nike-court-vision-mid-smoke-grey-dn3577-002-44-1020x680.jpg', 1, '2025-06-08', N'admin', N'admin', 0),
+(N'Giày Vans Old Skool', N'VANS-OS-01', N'Giày trượt ván cổ điển đen trắng', 5, 5, 4, N'https://bizweb.dktcdn.net/100/140/774/products/vans-old-skool-black-white-vn000d3hy28-3.jpg?v=1625905150880', 1, '2025-06-08', N'admin', N'admin', 0),
+(N'Giày Puma Speedcat OG', N'PUMA-SC-01', N'Giày Puma Speedcat màu xanh light blue', 3, 2, 5, N'https://sneakerdaily.vn/wp-content/uploads/2024/10/Giay-PUMA-Speedcat-OG-Team-Light-Blue-398847-01.jpg', 1, '2025-06-08', N'admin', N'admin', 0);
 
 INSERT INTO ChiTietSanPham (kich_co_id, san_pham_id, mau_sac_id, duong_dan_anh, gia_tien, so_luong_ton, trang_thai, tien_giam_gia, da_xoa, ngay_cap_nhat, nguoi_tao, nguoi_cap_nhat) VALUES
 (1, 1, 1, N'https://drake.vn/image/catalog/H%C3%ACnh%20content/gi%C3%A0y-sneaker-converse/giay-sneaker-converse-09.jpg', 2500000, 50, 1, 100000, 0, '2025-06-08', N'admin', N'admin'),
@@ -533,10 +513,9 @@ INSERT INTO ChiTietPhieuTraHang (phieu_tra_hang_id, chi_tiet_san_pham_id, so_luo
 GO
 
 --------------------------------------------------------------------------------
--- 15. CÁC SELECT KIỂM TRA
+-- 15. CÁC SELECT KIỂM TRA (KHÔNG CÓ BẢNG KIỂU DÁNG)
 --------------------------------------------------------------------------------
 SELECT * FROM ThuongHieu;
-SELECT * FROM KieuDang;
 SELECT * FROM KichCo;
 SELECT * FROM ChatLieu;
 SELECT * FROM MauSac;
@@ -561,3 +540,4 @@ SELECT * FROM LichSuPhieuTraHang;
 SELECT * FROM SanPhamKhuyenMai;
 SELECT * FROM ChiTietPhieuTraHang;
 GO
+
