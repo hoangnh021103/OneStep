@@ -117,28 +117,47 @@ public class SanPhamServiceImp implements SanPhamService {
     @Override
     public SanPhamResponse update(Integer id, SanPhamDTO dto) {
         log.info("Bắt đầu update sản phẩm ID: {}", id);
-        return sanPhamRepository.findById(id)
-                .map(entity -> {
-                    modelMapper.map(dto, entity);
-                    entity.setNgayCapNhat(LocalDate.now());
-                    // Nếu không gửi ảnh mới, giữ ảnh cũ
-                    if (dto.getDuongDanAnh() != null && !dto.getDuongDanAnh().isEmpty()) {
-                        try {
-                            byte[] imageData = dto.getDuongDanAnh().getBytes();
-                            String code = entity.getMaCode();
-                            String imgPath = CompletableFuture.supplyAsync(() -> cloudinaryUtils.uploadImage(imageData, code)).join();
-                            entity.setDuongDanAnh(imgPath);
-                        } catch (IOException e) {
-                            log.error("Lỗi xử lý file ảnh khi update", e);
-                            throw new RuntimeException("Lỗi khi xử lý file ảnh: " + e.getMessage(), e);
-                        }
-                    }
-                    SanPham updated = sanPhamRepository.save(entity);
-                    return modelMapper.map(updated, SanPhamResponse.class);
-                })
-                .orElse(null);
-    }
 
+        SanPham entity = sanPhamRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Sản phẩm không tồn tại với ID: " + id));
+
+        // Map dữ liệu cơ bản
+        entity.setTenSanPham(dto.getTenSanPham());
+        entity.setMaCode(dto.getMaCode());
+        entity.setMoTa(dto.getMoTa());
+        entity.setTrangThai(dto.getTrangThai());
+        entity.setNgayCapNhat(LocalDate.now());
+
+        // Cập nhật các quan hệ
+        entity.setDeGiay(deGiayRepository.findById(dto.getDeGiayId())
+                .orElseThrow(() -> new IllegalArgumentException("Đế giày không tồn tại: " + dto.getDeGiayId())));
+        entity.setKieuDang(kieuDangRepository.findById(dto.getKieuDangId())
+                .orElseThrow(() -> new IllegalArgumentException("Kiểu dáng không tồn tại: " + dto.getKieuDangId())));
+        entity.setThuongHieu(thuongHieuRepository.findById(dto.getThuongHieuId())
+                .orElseThrow(() -> new IllegalArgumentException("Thương hiệu không tồn tại: " + dto.getThuongHieuId())));
+        entity.setChatLieu(chatLieuRepository.findById(dto.getChatLieuId())
+                .orElseThrow(() -> new IllegalArgumentException("Chất liệu không tồn tại: " + dto.getChatLieuId())));
+
+        // Xử lý ảnh - chỉ cập nhật khi có file mới
+        if (dto.getDuongDanAnh() != null && !dto.getDuongDanAnh().isEmpty()) {
+            try {
+                byte[] imageData = dto.getDuongDanAnh().getBytes();
+                String code = entity.getMaCode();
+                String imgPath = CompletableFuture.supplyAsync(() ->
+                        cloudinaryUtils.uploadImage(imageData, code)).join();
+                entity.setDuongDanAnh(imgPath);
+                log.info("Đã cập nhật ảnh mới cho sản phẩm ID: {}", id);
+            } catch (IOException e) {
+                log.error("Lỗi xử lý file ảnh khi update", e);
+                throw new RuntimeException("Lỗi khi xử lý file ảnh: " + e.getMessage(), e);
+            }
+        } else {
+            log.info("Giữ nguyên ảnh cũ cho sản phẩm ID: {}", id);
+        }
+
+        SanPham updated = sanPhamRepository.save(entity);
+        return modelMapper.map(updated, SanPhamResponse.class);
+    }
     @Override
     public void delete(Integer id) {
         log.info("Xóa sản phẩm ID: {}", id);
