@@ -5,10 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="fc3a053f-9c7b-4b56-b3c8-66d6acd1258c" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/OneStep1/src/main/java/com/example/onestep/dto/request/MauSacDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/OneStep1/src/main/java/com/example/onestep/dto/request/MauSacDTO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/OneStep1/src/main/java/com/example/onestep/entity/MauSac.java" beforeDir="false" afterPath="$PROJECT_DIR$/OneStep1/src/main/java/com/example/onestep/entity/MauSac.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/OneStep1/src/main/java/com/example/onestep/service/serviceImp/MauSacServicelmp.java" beforeDir="false" afterPath="$PROJECT_DIR$/OneStep1/src/main/java/com/example/onestep/service/serviceImp/MauSacServicelmp.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/OneStep1/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/OneStep1/src/main/resources/application.properties" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -21,24 +18,39 @@
   <component name="MavenImportPreferences">
     <option name="generalSettings">
       <MavenGeneralSettings>
-        <option name="mavenHome" value="Use Maven wrapper" />
-        <option name="useMavenConfig" value="true" />
+        <option name="mavenHomeTypeForPersistence" value="WRAPPER" />
       </MavenGeneralSettings>
     </option>
   </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": 5
+}]]></component>
   <component name="ProjectId" id="2yDYEcM1iZuda9CnQOMkcAU5jyR" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;last_opened_file_path&quot;: &quot;D:/OneStep/OneStep1&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "git-widget-placeholder": "main",
+    "ignore.virus.scanning.warn.message": "true",
+    "last_opened_file_path": "G:/OneStep/OneStep1",
+    "nodejs_package_manager_path": "npm",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-9823dce3aa75-84258761d1cc-intellij.indexing.shared.core-IU-243.28141.18" />
+        <option value="bundled-js-predefined-d6986cc7102b-1632447f56bf-JavaScript-IU-243.28141.18" />
+      </set>
+    </attachedChunks>
+  </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
@@ -52,6 +64,7 @@
       <workItem from="1757264453398" duration="6000" />
       <workItem from="1757343372427" duration="17000" />
       <workItem from="1757344539888" duration="9000" />
+      <workItem from="1758117346761" duration="45000" />
     </task>
     <servers />
   </component>

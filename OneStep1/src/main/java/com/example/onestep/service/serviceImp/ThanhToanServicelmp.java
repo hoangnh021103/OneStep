@@ -80,4 +80,52 @@ public class ThanhToanServicelmp implements ThanhToanService {
         return thanhToanRepository.findById(id)
                 .map(entity -> modelMapper.map(entity, ThanhToanResponse.class));
     }
+    @Autowired
+    private KhachHangRepository khachHangRepository;
+
+    @Override
+    public ThanhToanResponse chonKhachHang(Integer hoaDonId, Integer khachHangId) {
+        ThanhToan hoaDon = thanhToanRepository.findById(hoaDonId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy hóa đơn"));
+
+        KhachHang khachHang = khachHangRepository.findById(khachHangId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy khách hàng"));
+
+        // set khách hàng vào hóa đơn
+        hoaDon.setKhachHang(khachHang);
+        hoaDon.setNgayCapNhat(LocalDate.now());
+
+        ThanhToan updated = thanhToanRepository.save(hoaDon);
+
+        // map sang response
+        return modelMapper.map(updated, ThanhToanResponse.class);
+    }
+    @Override
+    public ThanhToanResponse huyHoaDon(Integer id) {
+        ThanhToan hoaDon = thanhToanRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy hóa đơn"));
+
+        // set trạng thái = 2 (đã hủy)
+        hoaDon.setTrangThai(2);
+        hoaDon.setNgayCapNhat(LocalDate.now());
+
+        ThanhToan updated = thanhToanRepository.save(hoaDon);
+        return modelMapper.map(updated, ThanhToanResponse.class);
+    }
+    @Override
+    public ThanhToanResponse applyDiscount(Integer orderId, String discountCode) {
+        // Lấy hóa đơn theo id
+        ThanhToan hoaDon = thanhToanRepository.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy hóa đơn"));
+
+        // Giả sử giảm giá cố định 10%
+        float discount = 0.1f;
+        float tongTienMoi = hoaDon.getTongTien() - hoaDon.getTongTien() * discount;
+
+        hoaDon.setTongTien(tongTienMoi);  // giờ khớp kiểu float
+        hoaDon.setNgayCapNhat(LocalDate.now());
+
+        ThanhToan updated = thanhToanRepository.save(hoaDon);
+        return modelMapper.map(updated, ThanhToanResponse.class);
+    }
 }

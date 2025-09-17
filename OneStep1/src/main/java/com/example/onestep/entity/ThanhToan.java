@@ -50,4 +50,7 @@ public class ThanhToan {
 
     @Column(name = "da_xoa")
     private Integer daXoa;
+
+    public void setKhachHang(KhachHang khachHang) {
+    }
 }

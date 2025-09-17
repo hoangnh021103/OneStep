@@ -66,4 +66,26 @@ public class ThanhToanController {
         return optional.map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
+    // Thêm mới hóa đơn (hoặc thêm sản phẩm vào giỏ hàng)
+    @PostMapping("/add-hoa-don")
+    public ResponseEntity<ThanhToanResponse> addHoaDon(@RequestBody @Valid ThanhToanDTO dto) {
+        return ResponseEntity.ok(thanhToanService.add(dto));
+    }
+    @PutMapping("/{hoaDonId}/chon-khach-hang/{khachHangId}")
+    public ResponseEntity<ThanhToanResponse> chonKhachHang(
+            @PathVariable Integer hoaDonId,
+            @PathVariable Integer khachHangId) {
+        return ResponseEntity.ok(thanhToanService.chonKhachHang(hoaDonId, khachHangId));
+    }
+    // 7. Hủy hóa đơn
+    @PutMapping("/{hoaDonId}/huy")
+    public ResponseEntity<ThanhToanResponse> huyHoaDon(@PathVariable Integer hoaDonId) {
+        return ResponseEntity.ok(thanhToanService.huyHoaDon(hoaDonId));
+    }
+    @PutMapping("/{hoaDonId}/apply-discount")
+    public ResponseEntity<ThanhToanResponse> applyDiscount(
+            @PathVariable Integer hoaDonId,
+            @RequestParam String code) {
+        return ResponseEntity.ok(thanhToanService.applyDiscount(hoaDonId, code));
+    }
 }

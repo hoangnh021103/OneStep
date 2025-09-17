@@ -23,4 +23,11 @@ public interface ThanhToanService {
     void delete(Integer id);
 
     Optional<ThanhToanResponse> getById(Integer id);
+    ThanhToanResponse chonKhachHang(Integer hoaDonId, Integer khachHangId);
+
+
+    ThanhToanResponse huyHoaDon(Integer hoaDonId);
+
+    ThanhToanResponse applyDiscount(Integer hoaDonId, String code);
+
 }
