@@ -41,12 +41,9 @@ public class SanPhamController {
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<SanPhamResponse> update(@PathVariable Integer id, @RequestBody @Valid SanPhamDTO dto) {
+    public ResponseEntity<SanPhamResponse> update(@PathVariable Integer id, @Valid SanPhamDTO dto) {
         SanPhamResponse updated = sanPhamService.update(id, dto);
-        if (updated == null) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(updated);
+        return updated != null ? ResponseEntity.ok(updated) : ResponseEntity.notFound().build();
     }
 
     @DeleteMapping("/delete/{id}")
@@ -57,8 +54,8 @@ public class SanPhamController {
 
     @GetMapping("/{id}")
     public ResponseEntity<SanPhamResponse> getById(@PathVariable Integer id) {
-        Optional<SanPhamResponse> optional = sanPhamService.getById(id);
-        return optional.map(ResponseEntity::ok)
+        return sanPhamService.getById(id)
+                .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 }

@@ -2,11 +2,11 @@ package com.example.onestep.service.serviceImp;
 
 import com.example.onestep.config.cloudinary.CloudinaryUtils;
 import com.example.onestep.dto.request.SanPhamDTO;
-
 import com.example.onestep.dto.response.SanPhamResponse;
 import com.example.onestep.entity.*;
 import com.example.onestep.repository.*;
 import com.example.onestep.service.SanPhamService;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -23,14 +23,15 @@ import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class SanPhamServiceImp implements SanPhamService {
 
     @Autowired
     private ModelMapper modelMapper;
 
-
     @Autowired
     private CloudinaryUtils cloudinaryUtils;
+
     @Autowired
     private SanPhamRepository sanPhamRepository;
 
@@ -65,14 +66,17 @@ public class SanPhamServiceImp implements SanPhamService {
 
     @Override
     public SanPhamResponse add(SanPhamDTO dto) {
-        // Kiểm tra tính hợp lệ của dto
-        if (dto == null || dto.getDuongDanAnh() == null) {
-            throw new IllegalArgumentException("Dữ liệu sản phẩm hoặc file ảnh không được để trống.");
+        log.info("Bắt đầu add sản phẩm, DTO: {}", dto);
+
+        // Validation đã được xử lý bởi @Valid, nhưng kiểm tra file rỗng
+        if (dto.getDuongDanAnh().isEmpty()) {
+            log.error("File ảnh rỗng");
+            throw new IllegalArgumentException("File ảnh không được rỗng");
         }
 
         SanPham entity = modelMapper.map(dto, SanPham.class);
+        entity.setMaSanPham(null); // Force null để database tự sinh ID
         entity.setNgayCapNhat(LocalDate.now());
-
 
         // Tạo mã code ngẫu nhiên
         Random random = new Random();
@@ -80,59 +84,64 @@ public class SanPhamServiceImp implements SanPhamService {
         String code = String.format("SP%04d", number);
         entity.setMaCode(code);
 
+        // Upload ảnh
         String imgPath = null;
         try {
-            // Đọc dữ liệu ảnh
             byte[] imageData = dto.getDuongDanAnh().getBytes();
-
-            // Tải ảnh lên Cloudinary và chờ kết quả
-            imgPath = CompletableFuture.supplyAsync(() -> cloudinaryUtils.uploadImage(imageData, code))
-                    .join(); // Chờ hoàn thành và lấy kết quả
-
-            // Cập nhật đường dẫn ảnh
+            log.info("Đang upload ảnh với mã: {}", code);
+            imgPath = CompletableFuture.supplyAsync(() -> cloudinaryUtils.uploadImage(imageData, code)).join();
             entity.setDuongDanAnh(imgPath);
         } catch (IOException e) {
+            log.error("Lỗi xử lý file ảnh", e);
             throw new RuntimeException("Lỗi khi xử lý file ảnh: " + e.getMessage(), e);
         } catch (Exception e) {
+            log.error("Lỗi upload Cloudinary", e);
             throw new RuntimeException("Lỗi khi tải ảnh lên Cloudinary: " + e.getMessage(), e);
         }
 
-        DeGiay deGiay = deGiayRepository.findById(dto.getDeGiayId()).get();
+        // Kiểm tra và set các quan hệ
+        entity.setDeGiay(deGiayRepository.findById(dto.getDeGiayId())
+                .orElseThrow(() -> new IllegalArgumentException("Đế giày không tồn tại: " + dto.getDeGiayId())));
+        entity.setKieuDang(kieuDangRepository.findById(dto.getKieuDangId())
+                .orElseThrow(() -> new IllegalArgumentException("Kiểu dáng không tồn tại: " + dto.getKieuDangId())));
+        entity.setThuongHieu(thuongHieuRepository.findById(dto.getThuongHieuId())
+                .orElseThrow(() -> new IllegalArgumentException("Thương hiệu không tồn tại: " + dto.getThuongHieuId())));
+        entity.setChatLieu(chatLieuRepository.findById(dto.getChatLieuId())
+                .orElseThrow(() -> new IllegalArgumentException("Chất liệu không tồn tại: " + dto.getChatLieuId())));
 
-        entity.setDeGiay(deGiay);
-
-        KieuDang kieuDang = kieuDangRepository.findById(dto.getKieuDangId()).get();
-
-        entity.setKieuDang(kieuDang);
-
-        ThuongHieu thuongHieu = thuongHieuRepository.findById(dto.getThuongHieuId()).get();
-
-        entity.setThuongHieu(thuongHieu);
-
-        ChatLieu chatLieu = chatLieuRepository.findById(dto.getThuongHieuId()).get();
-
-        entity.setChatLieu(chatLieu);
-
-        // Lưu vào cơ sở dữ liệu
         SanPham saved = sanPhamRepository.save(entity);
+        log.info("Lưu sản phẩm thành công, ID: {}", saved.getMaSanPham());
         return modelMapper.map(saved, SanPhamResponse.class);
     }
 
     @Override
     public SanPhamResponse update(Integer id, SanPhamDTO dto) {
-        Optional<SanPham> optional = sanPhamRepository.findById(id);
-        if (optional.isEmpty()) return null;
-
-        SanPham entity = optional.get();
-        modelMapper.map(dto, entity);
-        entity.setNgayCapNhat(LocalDate.now());
-
-        SanPham updated = sanPhamRepository.save(entity);
-        return modelMapper.map(updated, SanPhamResponse.class);
+        log.info("Bắt đầu update sản phẩm ID: {}", id);
+        return sanPhamRepository.findById(id)
+                .map(entity -> {
+                    modelMapper.map(dto, entity);
+                    entity.setNgayCapNhat(LocalDate.now());
+                    // Nếu không gửi ảnh mới, giữ ảnh cũ
+                    if (dto.getDuongDanAnh() != null && !dto.getDuongDanAnh().isEmpty()) {
+                        try {
+                            byte[] imageData = dto.getDuongDanAnh().getBytes();
+                            String code = entity.getMaCode();
+                            String imgPath = CompletableFuture.supplyAsync(() -> cloudinaryUtils.uploadImage(imageData, code)).join();
+                            entity.setDuongDanAnh(imgPath);
+                        } catch (IOException e) {
+                            log.error("Lỗi xử lý file ảnh khi update", e);
+                            throw new RuntimeException("Lỗi khi xử lý file ảnh: " + e.getMessage(), e);
+                        }
+                    }
+                    SanPham updated = sanPhamRepository.save(entity);
+                    return modelMapper.map(updated, SanPhamResponse.class);
+                })
+                .orElse(null);
     }
 
     @Override
     public void delete(Integer id) {
+        log.info("Xóa sản phẩm ID: {}", id);
         if (sanPhamRepository.existsById(id)) {
             sanPhamRepository.deleteById(id);
         }
@@ -143,7 +152,4 @@ public class SanPhamServiceImp implements SanPhamService {
         return sanPhamRepository.findById(id)
                 .map(entity -> modelMapper.map(entity, SanPhamResponse.class));
     }
-
-
 }
-
