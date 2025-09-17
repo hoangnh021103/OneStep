@@ -38,10 +38,6 @@ public class SanPham {
     @JoinColumn(name = "chat_lieu_id", referencedColumnName = "id")
     private ChatLieu chatLieu;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "kieu_dang_id", referencedColumnName = "id")
-    private KieuDang kieuDang;
-
     @Column(name = "duong_dan_anh")
     private String duongDanAnh;
 

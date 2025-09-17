@@ -39,9 +39,6 @@ public class SanPhamDTO {
 
     private Integer deGiayId;
 
-
-    private Integer kieuDangId;
-
     private LocalDate ngayCapNhat;
 
 

@@ -38,8 +38,6 @@ public class SanPhamServiceImp implements SanPhamService {
     @Autowired
     private ChatLieuRepository chatLieuRepository;
 
-    @Autowired
-    private KieuDangRepository kieuDangRepository;
 
     @Autowired
     private ThuongHieuRepository thuongHieuRepository;
@@ -102,8 +100,6 @@ public class SanPhamServiceImp implements SanPhamService {
         // Kiểm tra và set các quan hệ
         entity.setDeGiay(deGiayRepository.findById(dto.getDeGiayId())
                 .orElseThrow(() -> new IllegalArgumentException("Đế giày không tồn tại: " + dto.getDeGiayId())));
-        entity.setKieuDang(kieuDangRepository.findById(dto.getKieuDangId())
-                .orElseThrow(() -> new IllegalArgumentException("Kiểu dáng không tồn tại: " + dto.getKieuDangId())));
         entity.setThuongHieu(thuongHieuRepository.findById(dto.getThuongHieuId())
                 .orElseThrow(() -> new IllegalArgumentException("Thương hiệu không tồn tại: " + dto.getThuongHieuId())));
         entity.setChatLieu(chatLieuRepository.findById(dto.getChatLieuId())
@@ -131,8 +127,6 @@ public class SanPhamServiceImp implements SanPhamService {
         // Cập nhật các quan hệ
         entity.setDeGiay(deGiayRepository.findById(dto.getDeGiayId())
                 .orElseThrow(() -> new IllegalArgumentException("Đế giày không tồn tại: " + dto.getDeGiayId())));
-        entity.setKieuDang(kieuDangRepository.findById(dto.getKieuDangId())
-                .orElseThrow(() -> new IllegalArgumentException("Kiểu dáng không tồn tại: " + dto.getKieuDangId())));
         entity.setThuongHieu(thuongHieuRepository.findById(dto.getThuongHieuId())
                 .orElseThrow(() -> new IllegalArgumentException("Thương hiệu không tồn tại: " + dto.getThuongHieuId())));
         entity.setChatLieu(chatLieuRepository.findById(dto.getChatLieuId())

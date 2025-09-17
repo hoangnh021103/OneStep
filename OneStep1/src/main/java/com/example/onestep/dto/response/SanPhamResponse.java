@@ -19,7 +19,7 @@ public class SanPhamResponse {
     private Integer thuongHieuId;
     private Integer chatLieuId;  // SỬA: Đảm bảo đúng tên
     private Integer deGiayId;
-    private Integer kieuDangId;
+
     private String duongDanAnh;
     private Integer trangThai;
     private LocalDate ngayCapNhat;
