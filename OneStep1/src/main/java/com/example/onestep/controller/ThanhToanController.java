@@ -88,4 +88,5 @@ public class ThanhToanController {
             @RequestParam String code) {
         return ResponseEntity.ok(thanhToanService.applyDiscount(hoaDonId, code));
     }
+    //8.
 }
