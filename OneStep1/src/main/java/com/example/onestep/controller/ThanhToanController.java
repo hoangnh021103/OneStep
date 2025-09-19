@@ -98,5 +98,5 @@ public class ThanhToanController {
     public ResponseEntity<List<SanPhamResponse>> getDanhSachSanPham() {
         return ResponseEntity.ok(sanPhamService.getAll());
     }
-
+    //..
 }
