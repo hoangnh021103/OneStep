@@ -6,6 +6,7 @@ import com.example.onestep.dto.response.ChiTietGioHangResponse;
 import com.example.onestep.dto.response.SanPhamResponse;
 import com.example.onestep.dto.response.ThanhToanResponse;
 import com.example.onestep.service.ChiTietGioHangService;
+import com.example.onestep.service.SanPhamService;
 import com.example.onestep.service.ThanhToanService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,8 +22,13 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/thanh-toan")
 public class ThanhToanController {
+    private final SanPhamService sanPhamService;
     @Autowired
     private ThanhToanService thanhToanService;
+
+    public ThanhToanController(SanPhamService sanPhamService) {
+        this.sanPhamService = sanPhamService;
+    }
 
     @GetMapping("/hien-thi")
     public ResponseEntity<List<ThanhToanResponse>> getAll() {
@@ -88,5 +94,9 @@ public class ThanhToanController {
             @RequestParam String code) {
         return ResponseEntity.ok(thanhToanService.applyDiscount(hoaDonId, code));
     }
-    //8...
+    @GetMapping("/san-pham")
+    public ResponseEntity<List<SanPhamResponse>> getDanhSachSanPham() {
+        return ResponseEntity.ok(sanPhamService.getAll());
+    }
+
 }
