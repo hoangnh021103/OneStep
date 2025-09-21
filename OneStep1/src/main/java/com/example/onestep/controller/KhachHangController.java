@@ -67,4 +67,10 @@ public class KhachHangController {
         return optional.map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
+
+    // 7. Tìm kiếm khách hàng theo từ khóa
+    @GetMapping("/tim-kiem")
+    public ResponseEntity<List<KhachHangResponse>> timKiem(@RequestParam String keyword) {
+        return ResponseEntity.ok(khachHangService.timKiem(keyword));
+    }
 }

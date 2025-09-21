@@ -23,4 +23,6 @@ public interface KhachHangService {
     void delete(Integer id);
 
     Optional<KhachHangResponse> getById(Integer id);
+
+    List<KhachHangResponse> timKiem(String keyword);
 }

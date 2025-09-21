@@ -80,4 +80,13 @@ public class KhachHangServicelmp implements KhachHangService {
         return khachHangRepository.findById(id)
                 .map(entity -> modelMapper.map(entity, KhachHangResponse.class));
     }
+
+    @Override
+    public List<KhachHangResponse> timKiem(String keyword) {
+        return khachHangRepository.findByHoTenContainingIgnoreCaseOrEmailContainingIgnoreCaseOrSoDienThoaiContaining(
+                        keyword, keyword, keyword)
+                .stream()
+                .map(kh -> modelMapper.map(kh, KhachHangResponse.class))
+                .collect(Collectors.toList());
+    }
 }

@@ -2,6 +2,7 @@ package com.example.onestep.service;
 
 import com.example.onestep.dto.request.ChiTietSanPhamDTO;
 import com.example.onestep.dto.response.ChiTietSanPhamResponse;
+import com.example.onestep.entity.ChiTietSanPham;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -18,5 +19,8 @@ public interface ChiTietSanPhamService {
 
     List<ChiTietSanPhamResponse> getBySanPhamId(Integer sanPhamId);
 
+    // Các method mới cho bán hàng
+    List<ChiTietSanPham> getAllForBanHang();
+    List<ChiTietSanPham> searchForBanHang(String keyword);
 
 }

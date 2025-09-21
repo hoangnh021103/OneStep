@@ -159,6 +159,14 @@ public class ChiTietSanPhamServiceImp implements ChiTietSanPhamService {
                 .build()).toList();
     }
 
+    @Override
+    public List<ChiTietSanPham> getAllForBanHang() {
+        return chiTietSanPhamRepository.findAllForBanHang();
+    }
 
+    @Override
+    public List<ChiTietSanPham> searchForBanHang(String keyword) {
+        return chiTietSanPhamRepository.searchForBanHang(keyword);
+    }
 
 }

@@ -48,8 +48,29 @@ public class SanPhamServiceImp implements SanPhamService {
     @Override
     public List<SanPhamResponse> getAll() {
         List<SanPham> list = sanPhamRepository.findAll();
+        log.info("=== DEBUG: Số lượng sản phẩm trong DB: {}", list.size());
+        
         return list.stream()
-                .map(sp -> modelMapper.map(sp, SanPhamResponse.class))
+                .map(sp -> {
+                    log.info("=== DEBUG: Mapping sản phẩm ID: {}, Tên: {}", sp.getMaSanPham(), sp.getTenSanPham());
+                    SanPhamResponse response = SanPhamResponse.builder()
+                            .maSanPham(sp.getMaSanPham())
+                            .tenSanPham(sp.getTenSanPham())
+                            .maCode(sp.getMaCode())
+                            .moTa(sp.getMoTa())
+                            .thuongHieuId(sp.getThuongHieu() != null ? sp.getThuongHieu().getId() : null)
+                            .chatLieuId(sp.getChatLieu() != null ? sp.getChatLieu().getId() : null)
+                            .deGiayId(sp.getDeGiay() != null ? sp.getDeGiay().getId() : null)
+                            .duongDanAnh(sp.getDuongDanAnh())
+                            .trangThai(sp.getTrangThai())
+                            .ngayCapNhat(sp.getNgayCapNhat())
+                            .nguoiTao(sp.getNguoiTao())
+                            .nguoiCapNhat(sp.getNguoiCapNhat())
+                            .daXoa(sp.getDaXoa())
+                            .build();
+                    log.info("=== DEBUG: Response: {}", response);
+                    return response;
+                })
                 .collect(Collectors.toList());
     }
 
@@ -165,4 +186,6 @@ public class SanPhamServiceImp implements SanPhamService {
         return sanPhamRepository.findById(id)
                 .map(entity -> modelMapper.map(entity, SanPhamResponse.class));
     }
+
+
 }
