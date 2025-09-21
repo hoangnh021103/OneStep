@@ -15,7 +15,6 @@ public class DonHangDTO {
 
     private Integer id;
 
-
     private Integer khachHangId;
 
     private Integer nhanVienId;
@@ -24,9 +23,7 @@ public class DonHangDTO {
 
     private Integer diaChiId;
 
-
     private String soDienThoai;
-
 
     private String hoTen;
 
@@ -48,17 +45,15 @@ public class DonHangDTO {
 
     private Integer loaiDon;
 
-
     private String ghiChu;
-
 
     private String maDon;
 
+    private Integer trangThai;
+
     private LocalDate ngayCapNhat;
 
-
     private String nguoiTao;
-
 
     private String nguoiCapNhat;
 

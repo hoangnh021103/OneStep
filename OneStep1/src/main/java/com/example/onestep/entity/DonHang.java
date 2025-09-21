@@ -71,6 +71,9 @@ public class DonHang {
     @Column(name = "ma_don", unique = true, length = 10, nullable = false)
     private String maDon;
 
+    @Column(name = "trang_thai")
+    private Integer trangThai;
+
     @Column(name = "ngay_cap_nhat")
     private LocalDate ngayCapNhat;
 
