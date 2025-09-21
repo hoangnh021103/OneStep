@@ -89,41 +89,4 @@ public class SanPhamController {
     }
 
 
-    // API mới cho bán hàng - trả về sản phẩm kèm chi tiết
-    @GetMapping("/ban-hang")
-    public ResponseEntity<List<SanPhamBanHangResponse>> getSanPhamForBanHang() {
-        try {
-            List<ChiTietSanPham> chiTietSanPhams = chiTietSanPhamService.getAllForBanHang();
-            System.out.println("=== DEBUG: Số lượng ChiTietSanPham: " + chiTietSanPhams.size());
-            
-            List<SanPhamBanHangResponse> responses = chiTietSanPhams.stream()
-                .map(this::mapToSanPhamBanHangResponse)
-                .toList();
-            
-            System.out.println("=== DEBUG: Số lượng response: " + responses.size());
-            return ResponseEntity.ok(responses);
-            
-        } catch (Exception e) {
-            System.err.println("=== ERROR: " + e.getMessage());
-            return ResponseEntity.ok(List.of());
-        }
-    }
-
-    private SanPhamBanHangResponse mapToSanPhamBanHangResponse(ChiTietSanPham chiTiet) {
-        return SanPhamBanHangResponse.builder()
-                .id(chiTiet.getMaChiTiet())
-                .chiTietSanPhamId(chiTiet.getMaChiTiet())
-                .maSanPham(chiTiet.getSanPham().getMaSanPham())
-                .maCode(chiTiet.getSanPham().getMaCode())
-                .tenSanPham(chiTiet.getSanPham().getTenSanPham())
-                .duongDanAnh(chiTiet.getDuongDanAnh() != null ? chiTiet.getDuongDanAnh() : chiTiet.getSanPham().getDuongDanAnh())
-                .giaBan(chiTiet.getGiaTien())
-                .soLuongTon(chiTiet.getSoLuongTon())
-                .tenKichThuoc(chiTiet.getKichCo() != null ? chiTiet.getKichCo().getTen() : "Không xác định")
-                .tenMauSac(chiTiet.getMauSac() != null ? chiTiet.getMauSac().getTen() : "Không xác định")
-                .tenThuongHieu(chiTiet.getSanPham().getThuongHieu() != null ? chiTiet.getSanPham().getThuongHieu().getTen() : "Không xác định")
-                .tenChatLieu(chiTiet.getSanPham().getChatLieu() != null ? chiTiet.getSanPham().getChatLieu().getTen() : "Không xác định")
-                .trangThai(chiTiet.getTrangThai())
-                .build();
-    }
 }

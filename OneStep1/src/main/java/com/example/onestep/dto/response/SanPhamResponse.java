@@ -26,4 +26,12 @@ public class SanPhamResponse {
     private String nguoiTao;
     private String nguoiCapNhat;
     private Integer daXoa;
+    
+    // Thông tin bổ sung từ chi tiết sản phẩm cho bán hàng
+    private Float giaBan;
+    private Integer soLuongTon;
+    private String tenKichThuoc;
+    private String tenMauSac;
+    private String tenThuongHieu;
+    private String tenChatLieu;
 }

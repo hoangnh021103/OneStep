@@ -44,15 +44,35 @@ public class SanPhamServiceImp implements SanPhamService {
 
     @Autowired
     private DeGiayRepository deGiayRepository;
+    
+    @Autowired
+    private ChiTietSanPhamRepository chiTietSanPhamRepository;
 
     @Override
     public List<SanPhamResponse> getAll() {
-        List<SanPham> list = sanPhamRepository.findAll();
+        List<SanPham> list = sanPhamRepository.findAllNotDeleted(); // Lấy sản phẩm chưa xóa
         log.info("=== DEBUG: Số lượng sản phẩm trong DB: {}", list.size());
         
         return list.stream()
                 .map(sp -> {
                     log.info("=== DEBUG: Mapping sản phẩm ID: {}, Tên: {}", sp.getMaSanPham(), sp.getTenSanPham());
+                    
+                    // Lấy thông tin từ chi tiết sản phẩm đầu tiên (chưa bị xóa) qua repository
+                    Float giaBan = null;
+                    Integer soLuongTon = null;
+                    String tenKichThuoc = null;
+                    String tenMauSac = null;
+                    
+                    // Tìm chi tiết sản phẩm theo mã sản phẩm
+                    var chiTietList = chiTietSanPhamRepository.findBySanPhamId(sp.getMaSanPham());
+                    if (!chiTietList.isEmpty()) {
+                        var chiTiet = chiTietList.get(0); // Lấy chi tiết đầu tiên
+                        giaBan = chiTiet.getGiaTien();
+                        soLuongTon = chiTiet.getSoLuongTon();
+                        tenKichThuoc = chiTiet.getKichCo() != null ? chiTiet.getKichCo().getTen() : null;
+                        tenMauSac = chiTiet.getMauSac() != null ? chiTiet.getMauSac().getTen() : null;
+                    }
+                    
                     SanPhamResponse response = SanPhamResponse.builder()
                             .maSanPham(sp.getMaSanPham())
                             .tenSanPham(sp.getTenSanPham())
@@ -67,8 +87,16 @@ public class SanPhamServiceImp implements SanPhamService {
                             .nguoiTao(sp.getNguoiTao())
                             .nguoiCapNhat(sp.getNguoiCapNhat())
                             .daXoa(sp.getDaXoa())
+                            // Thông tin bổ sung từ chi tiết sản phẩm
+                            .giaBan(giaBan)
+                            .soLuongTon(soLuongTon)
+                            .tenKichThuoc(tenKichThuoc)
+                            .tenMauSac(tenMauSac)
+                            .tenThuongHieu(sp.getThuongHieu() != null ? sp.getThuongHieu().getTen() : null)
+                            .tenChatLieu(sp.getChatLieu() != null ? sp.getChatLieu().getTen() : null)
                             .build();
-                    log.info("=== DEBUG: Response: {}", response);
+                    
+                    log.info("=== DEBUG: Response với giá: {}, tồn kho: {}", giaBan, soLuongTon);
                     return response;
                 })
                 .collect(Collectors.toList());
@@ -176,8 +204,14 @@ public class SanPhamServiceImp implements SanPhamService {
     @Override
     public void delete(Integer id) {
         log.info("Xóa sản phẩm ID: {}", id);
-        if (sanPhamRepository.existsById(id)) {
-            sanPhamRepository.deleteById(id);
+        Optional<SanPham> optional = sanPhamRepository.findById(id);
+        if (optional.isPresent()) {
+            SanPham entity = optional.get();
+            entity.setDaXoa(1); // Soft delete
+            entity.setNgayCapNhat(LocalDate.now());
+            entity.setNguoiCapNhat("SYSTEM"); // Hoặc lấy từ người dùng hiện tại
+            sanPhamRepository.save(entity);
+            log.info("Đã soft delete sản phẩm ID: {}", id);
         }
     }
 
