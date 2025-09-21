@@ -1,4 +1,11 @@
 ﻿
+
+
+--------------------------------------------------------------------------------
+-- CƠ SỞ DỮ LIỆU HOÀN CHỈNH - SHOE SHOP DATABASE
+-- Đã cập nhật bảng DonHang với trường trang_thai
+--------------------------------------------------------------------------------
+
 --------------------------------------------------------------------------------
 -- 1. BẢNG LOOKUP / DANH MỤC (KHÔNG CÓ KIỂU DÁNG)
 --------------------------------------------------------------------------------
@@ -207,7 +214,7 @@ CREATE TABLE DiaChi (
 GO
 
 --------------------------------------------------------------------------------
--- 5. BẢNG ĐƠN HÀNG & LỊCH SỬ
+-- 5. BẢNG ĐƠN HÀNG & LỊCH SỬ (ĐÃ CẬP NHẬT THÊM TRƯỜNG TRANG_THAI)
 --------------------------------------------------------------------------------
 CREATE TABLE DonHang (
     id INT IDENTITY(1,1) PRIMARY KEY,
@@ -229,6 +236,7 @@ CREATE TABLE DonHang (
     loai_don INT,
     ghi_chu NVARCHAR(1000),
     ma_don NVARCHAR(10) NOT NULL,
+    trang_thai INT, -- 1:Chờ xác nhận, 2:Đã xác nhận, 3:Chờ giao, 4:Đang giao, 5:Hoàn thành, 6:Đã hủy
     ngay_cap_nhat DATE,
     nguoi_tao NVARCHAR(255),
     nguoi_cap_nhat NVARCHAR(255),
@@ -462,15 +470,31 @@ INSERT INTO DiaChi (khach_hang_id, ma_quan, ten_quan, ma_tinh, ten_tinh, ma_phuo
 GO
 
 --------------------------------------------------------------------------------
--- 14. DỮ LIỆU MẪU CHO ĐƠN HÀNG, GIỎ HÀNG, THANH TOÁN, TRẢ HÀNG
+-- 14. DỮ LIỆU MẪU CHO ĐƠN HÀNG VỚI CÁC TRẠNG THÁI KHÁC NHAU
 --------------------------------------------------------------------------------
-INSERT INTO DonHang (khach_hang_id, nhan_vien_id, voucher_id, dia_chi_id, phuong_thuc_van_chuyen_id, so_dien_thoai, ho_ten, email, tong_tien_goc, tien_giam, tong_tien, tien_ship, ngay_xac_nhan, ngay_du_kien, ngay_nhan, loai_don, ghi_chu, ma_don, ngay_cap_nhat, nguoi_tao, nguoi_cap_nhat, da_xoa) VALUES
-(1, 1, 1, 1, 1, N'0901234567', N'Lê Văn C', N'c@gmail.com', 2500000, 100000, 2400000, 30000, '2025-06-09', '2025-06-11', '2025-06-11', 0, N'Giao nhanh', N'DH001', '2025-06-09', N'admin', N'admin', 0),
-(2, 2, 2, 2, 3, N'0912345678', N'Phạm Thị D', N'd@gmail.com', 2700000, 50000, 2650000, 30000, '2025-06-09', '2025-06-12', '2025-06-12', 1, N'Đơn ship', N'DH002', '2025-06-09', N'admin', N'admin', 0);
+INSERT INTO DonHang (khach_hang_id, nhan_vien_id, voucher_id, dia_chi_id, phuong_thuc_van_chuyen_id, so_dien_thoai, ho_ten, email, tong_tien_goc, tien_giam, tong_tien, tien_ship, ngay_xac_nhan, ngay_du_kien, ngay_nhan, loai_don, ghi_chu, ma_don, trang_thai, ngay_cap_nhat, nguoi_tao, nguoi_cap_nhat, da_xoa) VALUES
+-- Đơn hàng hoàn thành
+(1, 1, 1, 1, 1, N'0901234567', N'Lê Văn C', N'c@gmail.com', 2500000, 100000, 2400000, 30000, '2025-06-09', '2025-06-11', '2025-06-11', 0, N'Giao nhanh', N'DH001', 5, '2025-06-09', N'admin', N'admin', 0),
+(2, 2, 2, 2, 3, N'0912345678', N'Phạm Thị D', N'd@gmail.com', 2700000, 50000, 2650000, 30000, '2025-06-09', '2025-06-12', '2025-06-12', 1, N'Đơn ship', N'DH002', 5, '2025-06-09', N'admin', N'admin', 0),
+-- Đơn hàng chờ xác nhận
+(1, 1, 3, 1, 2, N'0901234567', N'Lê Văn C', N'c@gmail.com', 1800000, 0, 1800000, 25000, NULL, NULL, NULL, 0, N'Đơn mới', N'DH003', 1, '2025-09-21', N'admin', N'admin', 0),
+-- Đơn hàng đã xác nhận
+(2, 2, NULL, 2, 1, N'0912345678', N'Phạm Thị D', N'd@gmail.com', 3200000, 0, 3200000, 30000, '2025-09-21', NULL, NULL, 1, N'Đã xác nhận', N'DH004', 2, '2025-09-21', N'admin', N'admin', 0),
+-- Đơn hàng chờ giao
+(1, 1, 5, 1, 3, N'0901234567', N'Lê Văn C', N'c@gmail.com', 1500000, 50000, 1450000, 20000, '2025-09-21', '2025-09-23', NULL, 0, N'Chờ giao hàng', N'DH005', 3, '2025-09-21', N'admin', N'admin', 0),
+-- Đơn hàng đang giao
+(2, 2, NULL, 2, 1, N'0912345678', N'Phạm Thị D', N'd@gmail.com', 2500000, 100000, 2400000, 30000, '2025-09-20', '2025-09-22', NULL, 1, N'Đang giao hàng', N'DH006', 4, '2025-09-21', N'admin', N'admin', 0),
+-- Đơn hàng đã hủy
+(1, 1, NULL, 1, 4, N'0901234567', N'Lê Văn C', N'c@gmail.com', 2700000, 0, 2700000, 0, '2025-09-19', NULL, NULL, 0, N'Khách hủy đơn', N'DH007', 6, '2025-09-21', N'admin', N'admin', 0);
 
 INSERT INTO LichSuDonHang (don_hang_id, trang_thai, ngay_cap_nhat, nguoi_tao, nguoi_cap_nhat, da_xoa) VALUES
-(1, 1, '2025-06-09', N'admin', N'admin', 0),
-(2, 1, '2025-06-09', N'admin', N'admin', 0);
+(1, 5, '2025-06-09', N'admin', N'admin', 0),
+(2, 5, '2025-06-09', N'admin', N'admin', 0),
+(3, 1, '2025-09-21', N'admin', N'admin', 0),
+(4, 2, '2025-09-21', N'admin', N'admin', 0),
+(5, 3, '2025-09-21', N'admin', N'admin', 0),
+(6, 4, '2025-09-21', N'admin', N'admin', 0),
+(7, 6, '2025-09-21', N'admin', N'admin', 0);
 
 INSERT INTO GioHang (khach_hang_id, ngay_tao, ngay_cap_nhat, nguoi_tao, nguoi_cap_nhat, da_xoa) VALUES
 (1, '2025-06-08', '2025-06-08', N'admin', N'admin', 0),
@@ -483,11 +507,21 @@ INSERT INTO ChiTietGioHang (gio_hang_id, chi_tiet_san_pham_id, so_luong, ngay_ca
 
 INSERT INTO ChiTietDonHang (don_hang_id, chi_tiet_san_pham_id, so_luong, don_gia, tong_tien, trang_thai, ngay_cap_nhat, nguoi_tao, nguoi_cap_nhat, da_xoa) VALUES
 (1, 1, 2, 1250000, 2500000, 1, '2025-06-09', N'admin', N'admin', 0),
-(2, 2, 1, 2700000, 2700000, 1, '2025-06-09', N'admin', N'admin', 0);
+(2, 2, 1, 2700000, 2700000, 1, '2025-06-09', N'admin', N'admin', 0),
+(3, 3, 1, 1800000, 1800000, 1, '2025-09-21', N'admin', N'admin', 0),
+(4, 4, 1, 3200000, 3200000, 1, '2025-09-21', N'admin', N'admin', 0),
+(5, 5, 1, 1500000, 1500000, 1, '2025-09-21', N'admin', N'admin', 0),
+(6, 1, 2, 1250000, 2500000, 1, '2025-09-21', N'admin', N'admin', 0),
+(7, 2, 1, 2700000, 2700000, 1, '2025-09-21', N'admin', N'admin', 0);
 
 INSERT INTO ThanhToan (don_hang_id, phuong_thuc_id, ma_giao_dich, tong_tien, mo_ta, trang_thai, ngay_cap_nhat, nguoi_tao, nguoi_cap_nhat, da_xoa) VALUES
 (1, 1, N'TT001', 2400000, N'Thanh toán khi nhận hàng', 1, '2025-06-09', N'admin', N'admin', 0),
-(2, 2, N'TT002', 2650000, N'Thanh toán qua VNPAY', 1, '2025-06-09', N'admin', N'admin', 0);
+(2, 2, N'TT002', 2650000, N'Thanh toán qua VNPAY', 1, '2025-06-09', N'admin', N'admin', 0),
+(3, 1, N'TT003', 1800000, N'Chờ thanh toán khi nhận hàng', 0, '2025-09-21', N'admin', N'admin', 0),
+(4, 3, N'TT004', 3200000, N'Thanh toán qua MoMo', 1, '2025-09-21', N'admin', N'admin', 0),
+(5, 2, N'TT005', 1450000, N'Thanh toán qua VNPAY', 1, '2025-09-21', N'admin', N'admin', 0),
+(6, 1, N'TT006', 2400000, N'Chờ thanh toán khi giao', 0, '2025-09-21', N'admin', N'admin', 0),
+(7, NULL, NULL, 0, N'Đơn hàng đã bị hủy', 0, '2025-09-21', N'admin', N'admin', 0);
 
 INSERT INTO PhieuTraHang (ma, gia_tri, so_tien_phai_tra, thong_tin_thanh_toan, hinh_thuc_thanh_toan, ngay_cap_nhat, nguoi_tao, nguoi_cap_nhat, da_xoa) VALUES
 (N'TH001', 1250000, 1250000, N'Ngân hàng A', N'VNPAY', '2025-06-10', N'admin', N'admin', 0),
@@ -512,9 +546,9 @@ INSERT INTO ChiTietPhieuTraHang (phieu_tra_hang_id, chi_tiet_san_pham_id, so_luo
 (2, 5, 1, 1500000, N'Khách không nhận', '2025-06-10', N'admin', N'admin', 0);
 GO
 
---------------------------------------------------------------------------------
--- 15. CÁC SELECT KIỂM TRA (KHÔNG CÓ BẢNG KIỂU DÁNG)
---------------------------------------------------------------------------------
+
+
+
 SELECT * FROM ThuongHieu;
 SELECT * FROM KichCo;
 SELECT * FROM ChatLieu;
