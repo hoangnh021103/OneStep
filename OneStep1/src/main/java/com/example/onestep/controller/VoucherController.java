@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -65,5 +66,54 @@ public class VoucherController {
         Optional<VoucherResponse> optional = voucherService.getById(id);
         return optional.map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    // 7. Validate voucher theo mã
+    @GetMapping("/validate/{ma}")
+    public ResponseEntity<?> validateVoucher(@PathVariable String ma) {
+        try {
+            VoucherResponse voucher = voucherService.validateVoucher(ma);
+            if (voucher != null) {
+                return ResponseEntity.ok(Map.of(
+                    "success", true,
+                    "voucher", voucher,
+                    "message", "Voucher hợp lệ"
+                ));
+            } else {
+                return ResponseEntity.ok(Map.of(
+                    "success", false,
+                    "message", "Voucher không hợp lệ hoặc đã hết hạn"
+                ));
+            }
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of(
+                "success", false,
+                "message", "Lỗi khi validate voucher: " + e.getMessage()
+            ));
+        }
+    }
+
+    // 8. Sử dụng voucher (trừ số lượng)
+    @PostMapping("/use/{ma}")
+    public ResponseEntity<?> useVoucher(@PathVariable String ma) {
+        try {
+            boolean success = voucherService.useVoucher(ma);
+            if (success) {
+                return ResponseEntity.ok(Map.of(
+                    "success", true,
+                    "message", "Sử dụng voucher thành công"
+                ));
+            } else {
+                return ResponseEntity.ok(Map.of(
+                    "success", false,
+                    "message", "Không thể sử dụng voucher"
+                ));
+            }
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of(
+                "success", false,
+                "message", "Lỗi khi sử dụng voucher: " + e.getMessage()
+            ));
+        }
     }
 }

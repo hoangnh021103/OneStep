@@ -23,4 +23,8 @@ public interface VoucherService {
     void delete(Integer id);
 
     Optional<VoucherResponse> getById(Integer id);
+
+    VoucherResponse validateVoucher(String ma);
+
+    boolean useVoucher(String ma);
 }

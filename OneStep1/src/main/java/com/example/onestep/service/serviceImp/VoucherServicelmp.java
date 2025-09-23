@@ -80,4 +80,77 @@ public class VoucherServicelmp implements VoucherService {
         return voucherRepository.findById(id)
                 .map(entity -> modelMapper.map(entity, VoucherResponse.class));
     }
+
+    @Override
+    public VoucherResponse validateVoucher(String ma) {
+        // Tìm voucher theo mã
+        List<Voucher> vouchers = voucherRepository.findAll().stream()
+                .filter(v -> v.getMa().equalsIgnoreCase(ma))
+                .collect(Collectors.toList());
+
+        if (vouchers.isEmpty()) {
+            return null; // Không tìm thấy voucher
+        }
+
+        Voucher voucher = vouchers.get(0);
+        LocalDate now = LocalDate.now();
+
+        // Kiểm tra các điều kiện
+        // 1. Kiểm tra đã xóa
+        if (voucher.getDaXoa() != null && voucher.getDaXoa() == 1) {
+            return null;
+        }
+
+        // 2. Kiểm tra thời gian hiệu lực
+        if (voucher.getNgayBatDau() != null && now.isBefore(voucher.getNgayBatDau())) {
+            return null; // Chưa đến ngày bắt đầu
+        }
+        if (voucher.getNgayKetThuc() != null && now.isAfter(voucher.getNgayKetThuc())) {
+            return null; // Đã hết hạn
+        }
+
+        // 3. Kiểm tra số lượng còn lại
+        if (voucher.getSoLuong() == null || voucher.getSoLuong() <= 0) {
+            return null; // Hết số lượng
+        }
+
+        // Voucher hợp lệ
+        return modelMapper.map(voucher, VoucherResponse.class);
+    }
+
+    @Override
+    public boolean useVoucher(String ma) {
+        try {
+            // Tìm voucher theo mã
+            List<Voucher> vouchers = voucherRepository.findAll().stream()
+                    .filter(v -> v.getMa().equalsIgnoreCase(ma))
+                    .collect(Collectors.toList());
+
+            if (vouchers.isEmpty()) {
+                return false;
+            }
+
+            Voucher voucher = vouchers.get(0);
+
+            // Kiểm tra lại điều kiện trước khi sử dụng
+            VoucherResponse validation = validateVoucher(ma);
+            if (validation == null) {
+                return false;
+            }
+
+            // Trừ số lượng
+            int currentQuantity = voucher.getSoLuong();
+            if (currentQuantity > 0) {
+                voucher.setSoLuong(currentQuantity - 1);
+                voucher.setNgayCapNhat(LocalDate.now());
+                voucherRepository.save(voucher);
+                return true;
+            }
+
+            return false;
+        } catch (Exception e) {
+            System.err.println("Lỗi khi sử dụng voucher: " + e.getMessage());
+            return false;
+        }
+    }
 }
