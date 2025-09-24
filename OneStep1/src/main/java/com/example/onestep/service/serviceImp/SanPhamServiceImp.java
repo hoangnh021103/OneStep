@@ -62,6 +62,7 @@ public class SanPhamServiceImp implements SanPhamService {
                     Integer soLuongTon = null;
                     String tenKichThuoc = null;
                     String tenMauSac = null;
+                    Integer trangThaiChiTiet = sp.getTrangThai(); // Mặc định từ SanPham
                     
                     // Tìm chi tiết sản phẩm theo mã sản phẩm
                     var chiTietList = chiTietSanPhamRepository.findBySanPhamId(sp.getMaSanPham());
@@ -71,6 +72,10 @@ public class SanPhamServiceImp implements SanPhamService {
                         soLuongTon = chiTiet.getSoLuongTon();
                         tenKichThuoc = chiTiet.getKichCo() != null ? chiTiet.getKichCo().getTen() : null;
                         tenMauSac = chiTiet.getMauSac() != null ? chiTiet.getMauSac().getTen() : null;
+                        
+                        // Cập nhật trạng thái dựa trên số lượng tồn kho từ ChiTietSanPham
+                        // Nếu tồn kho = 0 thì trạng thái = 0 (hết hàng), ngược lại = 1 (còn hàng)
+                        trangThaiChiTiet = (soLuongTon != null && soLuongTon > 0) ? 1 : 0;
                     }
                     
                     SanPhamResponse response = SanPhamResponse.builder()
@@ -82,7 +87,7 @@ public class SanPhamServiceImp implements SanPhamService {
                             .chatLieuId(sp.getChatLieu() != null ? sp.getChatLieu().getId() : null)
                             .deGiayId(sp.getDeGiay() != null ? sp.getDeGiay().getId() : null)
                             .duongDanAnh(sp.getDuongDanAnh())
-                            .trangThai(sp.getTrangThai())
+                            .trangThai(trangThaiChiTiet)
                             .ngayCapNhat(sp.getNgayCapNhat())
                             .nguoiTao(sp.getNguoiTao())
                             .nguoiCapNhat(sp.getNguoiCapNhat())
@@ -96,7 +101,7 @@ public class SanPhamServiceImp implements SanPhamService {
                             .tenChatLieu(sp.getChatLieu() != null ? sp.getChatLieu().getTen() : null)
                             .build();
                     
-                    log.info("=== DEBUG: Response với giá: {}, tồn kho: {}", giaBan, soLuongTon);
+                    log.info("=== DEBUG: Response với giá: {}, tồn kho: {}, trạng thái: {}", giaBan, soLuongTon, trangThaiChiTiet);
                     return response;
                 })
                 .collect(Collectors.toList());
@@ -219,6 +224,44 @@ public class SanPhamServiceImp implements SanPhamService {
     public Optional<SanPhamResponse> getById(Integer id) {
         return sanPhamRepository.findById(id)
                 .map(entity -> modelMapper.map(entity, SanPhamResponse.class));
+    }
+
+    /**
+     * Đồng bộ trạng thái tất cả sản phẩm dựa trên tồn kho của ChiTietSanPham
+     * Method này dùng để sửa dữ liệu cũ khi có sự không nhất quán
+     */
+    public void syncAllProductStatus() {
+        try {
+            List<SanPham> allProducts = sanPhamRepository.findAllNotDeleted();
+            log.info("Bắt đầu đồng bộ trạng thái cho {} sản phẩm", allProducts.size());
+            
+            for (SanPham sanPham : allProducts) {
+                // Lấy tất cả chi tiết sản phẩm của sản phẩm này (chưa bị xóa)
+                var chiTietList = chiTietSanPhamRepository.findBySanPhamId(sanPham.getMaSanPham());
+                
+                // Tính tổng tồn kho của tất cả chi tiết sản phẩm
+                int totalStock = chiTietList.stream()
+                        .filter(ct -> ct.getDaXoa() == 0) // Chỉ tính những chi tiết chưa bị xóa
+                        .mapToInt(ChiTietSanPham::getSoLuongTon)
+                        .sum();
+                
+                // Cập nhật trạng thái sản phẩm
+                int newStatus = totalStock > 0 ? 1 : 0;
+                if (!sanPham.getTrangThai().equals(newStatus)) {
+                    sanPham.setTrangThai(newStatus);
+                    sanPham.setNgayCapNhat(LocalDate.now());
+                    sanPham.setNguoiCapNhat("SYSTEM_SYNC_ALL");
+                    
+                    sanPhamRepository.save(sanPham);
+                    log.info("Đã đồng bộ sản phẩm {}: tồn kho = {}, trạng thái = {}", 
+                            sanPham.getTenSanPham(), totalStock, (newStatus == 1 ? "Còn hàng" : "Hết hàng"));
+                }
+            }
+            
+            log.info("Hoàn thành đồng bộ trạng thái cho tất cả sản phẩm");
+        } catch (Exception e) {
+            log.error("Lỗi khi đồng bộ trạng thái tất cả sản phẩm: " + e.getMessage(), e);
+        }
     }
 
 

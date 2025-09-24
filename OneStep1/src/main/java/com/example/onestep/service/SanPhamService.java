@@ -15,5 +15,6 @@ public interface SanPhamService {
     SanPhamResponse update(Integer id, SanPhamDTO sanPhamDTO);
     void delete(Integer id);
     Optional<SanPhamResponse> getById(Integer id);
+    void syncAllProductStatus();
 
 }

@@ -174,29 +174,82 @@ public class ThanhToanController {
     @PostMapping("/ban-hang-tai-quay")
     public ResponseEntity<?> banHangTaiQuay(@RequestBody @Valid BanHangTaiQuayDTO dto) {
         try {
-            // 1. Tạo đơn hàng
+            System.out.println("=== DEBUG: Bắt đầu xử lý thanh toán ===");
+            System.out.println("Mã đơn hàng: " + dto.getMaHoaDon());
+            System.out.println("Số sản phẩm: " + dto.getChiTietDonHang().size());
+            
+            // 0. Kiểm tra số lượng tồn kho trước khi tạo đơn hàng
+            for (BanHangTaiQuayDTO.ChiTietDonHangBanHangDTO chiTiet : dto.getChiTietDonHang()) {
+                // Sử dụng sanPhamId để tìm chiTietSanPhamId tương ứng
+                Integer chiTietSanPhamId = chiTiet.getSanPhamId(); // Frontend gửi chiTietSanPhamId qua sanPhamId
+                
+                System.out.println("=== DEBUG: Kiểm tra tồn kho ===");
+                System.out.println("ChiTietSanPhamId: " + chiTietSanPhamId);
+                System.out.println("Số lượng cần: " + chiTiet.getSoLuong());
+                
+                boolean hasEnoughStock = chiTietSanPhamService.checkInventoryQuantity(
+                    chiTietSanPhamId, chiTiet.getSoLuong());
+                
+                System.out.println("Có đủ tồn kho: " + hasEnoughStock);
+                
+                if (!hasEnoughStock) {
+                    System.out.println("=== ERROR: Không đủ tồn kho cho sản phẩm ID: " + chiTietSanPhamId);
+                    return ResponseEntity.badRequest().body(Map.of(
+                        "success", false,
+                        "message", "Sản phẩm không đủ số lượng tồn kho để bán"
+                    ));
+                }
+            }
+
+            // 1. Lấy thông tin khách hàng nếu có
+            String hoTen = "Khách lẻ";
+            String soDienThoai = "Không có";
+            String email = "Không có";
+            
+            if (dto.getKhachHangId() != null) {
+                Optional<KhachHangResponse> khachHangOpt = khachHangService.getById(dto.getKhachHangId());
+                if (khachHangOpt.isPresent()) {
+                    KhachHangResponse khachHang = khachHangOpt.get();
+                    hoTen = khachHang.getHoTen() != null ? khachHang.getHoTen() : "Khách lẻ";
+                    soDienThoai = khachHang.getSoDienThoai() != null ? khachHang.getSoDienThoai() : "Không có";
+                    email = khachHang.getEmail() != null ? khachHang.getEmail() : "Không có";
+                    System.out.println("=== DEBUG: Thông tin khách hàng ===");
+                    System.out.println("Tên: " + hoTen);
+                    System.out.println("SĐT: " + soDienThoai);
+                    System.out.println("Email: " + email);
+                }
+            }
+
+            // 2. Tạo đơn hàng
             DonHangDTO donHangDTO = DonHangDTO.builder()
                     .khachHangId(dto.getKhachHangId())
-                    .hoTen(dto.getKhachHangId() != null ? null : "Khách lẻ")
+                    .hoTen(hoTen)
+                    .soDienThoai(soDienThoai)
+                    .email(email)
                     .maDon(dto.getMaHoaDon())
                     .tongTienGoc(dto.getTongTien() - (dto.getPhiGiaoHang() != null ? dto.getPhiGiaoHang() : 0))
                     .tienShip(dto.getPhiGiaoHang() != null ? dto.getPhiGiaoHang() : 0f)
                     .tienGiam(0f) // Sẽ tính sau khi áp dụng voucher
                     .tongTien(dto.getTongTien())
                     .loaiDon(1) // 1: Bán tại quầy
+                    .trangThai(2) // 2: Đã xác nhận (cho bán hàng tại quầy)
                     .ghiChu(dto.getGhiChu())
                     .nguoiTao(dto.getNguoiTao() != null ? dto.getNguoiTao() : "Admin")
                     .ngayCapNhat(java.time.LocalDate.now())
+                    .ngayXacNhan(java.time.LocalDate.now()) // Ngày xác nhận = ngày tạo cho bán hàng tại quầy
                     .daXoa(0)
                     .build();
 
             DonHangResponse donHangResponse = donHangService.add(donHangDTO);
 
-            // 2. Tạo chi tiết đơn hàng
+            // 3. Tạo chi tiết đơn hàng và cập nhật số lượng tồn kho
             for (BanHangTaiQuayDTO.ChiTietDonHangBanHangDTO chiTiet : dto.getChiTietDonHang()) {
+                // Sử dụng sanPhamId để tìm chiTietSanPhamId tương ứng
+                Integer chiTietSanPhamId = chiTiet.getSanPhamId(); // Frontend gửi chiTietSanPhamId qua sanPhamId
+                
                 ChiTietDonHangDTO chiTietDTO = ChiTietDonHangDTO.builder()
                         .donHangId(donHangResponse.getId())
-                        .chiTietSanPhamId(chiTiet.getSanPhamId()) // Sử dụng chiTietSanPhamId
+                        .chiTietSanPhamId(chiTietSanPhamId) // Sử dụng chiTietSanPhamId
                         .soLuong(chiTiet.getSoLuong())
                         .donGia(chiTiet.getDonGia())
                         .tongTien(chiTiet.getThanhTien())
@@ -207,9 +260,20 @@ public class ThanhToanController {
                         .build();
 
                 chiTietDonHangService.add(chiTietDTO);
+                
+                // 4. Cập nhật số lượng tồn kho
+                boolean updateSuccess = chiTietSanPhamService.updateInventoryQuantity(
+                    chiTietSanPhamId, chiTiet.getSoLuong());
+                
+                if (!updateSuccess) {
+                    return ResponseEntity.badRequest().body(Map.of(
+                        "success", false,
+                        "message", "Lỗi khi cập nhật số lượng tồn kho"
+                    ));
+                }
             }
 
-            // 3. Tạo thông tin thanh toán
+            // 5. Tạo thông tin thanh toán
             ThanhToanDTO thanhToanDTO = ThanhToanDTO.builder()
                     .donHangId(donHangResponse.getId())
                     .phuongThucId(dto.getPhuongThucThanhToan().equals("cash") ? 1 : 2) // 1: Tiền mặt, 2: Chuyển khoản

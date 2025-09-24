@@ -39,5 +39,13 @@ public interface ChiTietSanPhamRepository extends JpaRepository<ChiTietSanPham, 
            "ORDER BY sp.tenSanPham, kc.ten, ms.ten")
     List<ChiTietSanPham> searchForBanHang(@Param("keyword") String keyword);
 
+    // Tìm ChiTietSanPham theo mã sản phẩm (maCode)
+    @Query("SELECT c FROM ChiTietSanPham c " +
+           "JOIN FETCH c.sanPham sp " +
+           "LEFT JOIN FETCH c.kichCo kc " +
+           "LEFT JOIN FETCH c.mauSac ms " +
+           "WHERE c.daXoa = 0 AND sp.daXoa = 0 AND sp.maCode = :maCode")
+    List<ChiTietSanPham> findByMaCode(@Param("maCode") String maCode);
+
 }
 

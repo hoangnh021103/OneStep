@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -86,6 +87,22 @@ public class SanPhamController {
         return sanPhamService.getById(id)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @PostMapping("/sync-status")
+    public ResponseEntity<Map<String, String>> syncAllProductStatus() {
+        try {
+            sanPhamService.syncAllProductStatus();
+            return ResponseEntity.ok(Map.of(
+                "success", "true",
+                "message", "Đã đồng bộ trạng thái tất cả sản phẩm thành công"
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of(
+                "success", "false",
+                "message", "Lỗi khi đồng bộ trạng thái: " + e.getMessage()
+            ));
+        }
     }
 
 

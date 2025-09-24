@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -71,6 +72,10 @@ public class ChiTietSanPhamServiceImp implements ChiTietSanPhamService {
         entity.setDaXoa(0);
 
         ChiTietSanPham saved = chiTietSanPhamRepository.save(entity);
+        
+        // Đồng bộ trạng thái với bảng SanPham
+        syncProductStatus(dto.getSanPhamId());
+        
         return modelMapper.map(saved, ChiTietSanPhamResponse.class);
     }
 
@@ -113,6 +118,10 @@ public class ChiTietSanPhamServiceImp implements ChiTietSanPhamService {
 
         // Lưu và trả về kết quả
         ChiTietSanPham updated = chiTietSanPhamRepository.save(entity);
+        
+        // Đồng bộ trạng thái với bảng SanPham
+        syncProductStatus(dto.getSanPhamId());
+        
         return modelMapper.map(updated, ChiTietSanPhamResponse.class);
     }
 
@@ -123,11 +132,16 @@ public class ChiTietSanPhamServiceImp implements ChiTietSanPhamService {
         Optional<ChiTietSanPham> optional = chiTietSanPhamRepository.findById(id);
         if (optional.isPresent()) {
             ChiTietSanPham entity = optional.get();
+            Integer sanPhamId = entity.getSanPham().getMaSanPham(); // Lưu ID sản phẩm trước khi xóa
+            
             entity.setDaXoa(1);
             entity.setNgayCapNhat(LocalDate.now());
             entity.setNguoiCapNhat("SYSTEM"); // Hoặc lấy từ người dùng hiện tại
 
             chiTietSanPhamRepository.save(entity);
+            
+            // Đồng bộ trạng thái với bảng SanPham sau khi xóa
+            syncProductStatus(sanPhamId);
         }
     }
 
@@ -160,6 +174,11 @@ public class ChiTietSanPhamServiceImp implements ChiTietSanPhamService {
     }
 
     @Override
+    public List<ChiTietSanPham> findBySanPhamIdEntity(Integer sanPhamId) {
+        return null;
+    }
+
+    @Override
     public List<ChiTietSanPham> getAllForBanHang() {
         return chiTietSanPhamRepository.findAllForBanHang();
     }
@@ -167,6 +186,115 @@ public class ChiTietSanPhamServiceImp implements ChiTietSanPhamService {
     @Override
     public List<ChiTietSanPham> searchForBanHang(String keyword) {
         return chiTietSanPhamRepository.searchForBanHang(keyword);
+    }
+
+    @Override
+    public boolean updateInventoryQuantity(Integer chiTietSanPhamId, Integer quantitySold) {
+        try {
+            Optional<ChiTietSanPham> optional = chiTietSanPhamRepository.findById(chiTietSanPhamId);
+            if (optional.isEmpty()) {
+                return false;
+            }
+
+            ChiTietSanPham entity = optional.get();
+            int currentQuantity = entity.getSoLuongTon();
+            
+            // Kiểm tra số lượng tồn kho có đủ không
+            if (currentQuantity < quantitySold) {
+                return false;
+            }
+
+            // Trừ số lượng tồn kho
+            int newQuantity = currentQuantity - quantitySold;
+            entity.setSoLuongTon(newQuantity);
+            
+            // Cập nhật trạng thái: 0 = hết hàng, 1 = còn hàng
+            entity.setTrangThai(newQuantity > 0 ? 1 : 0);
+            entity.setNgayCapNhat(LocalDate.now());
+            entity.setNguoiCapNhat("SYSTEM_SALE");
+
+            chiTietSanPhamRepository.save(entity);
+            
+            // Đồng bộ trạng thái với bảng SanPham
+            syncProductStatus(entity.getSanPham().getMaSanPham());
+            
+            return true;
+        } catch (Exception e) {
+            System.err.println("Lỗi khi cập nhật số lượng tồn kho: " + e.getMessage());
+            return false;
+        }
+    }
+
+    @Override
+    public boolean checkInventoryQuantity(Integer chiTietSanPhamId, Integer quantityNeeded) {
+        try {
+            System.out.println("=== DEBUG: checkInventoryQuantity ===");
+            System.out.println("ChiTietSanPhamId: " + chiTietSanPhamId);
+            System.out.println("Quantity needed: " + quantityNeeded);
+            
+            Optional<ChiTietSanPham> optional = chiTietSanPhamRepository.findById(chiTietSanPhamId);
+            if (optional.isEmpty()) {
+                System.out.println("ERROR: Không tìm thấy ChiTietSanPham với ID: " + chiTietSanPhamId);
+                return false;
+            }
+
+            ChiTietSanPham entity = optional.get();
+            System.out.println("Tìm thấy ChiTietSanPham:");
+            System.out.println("- Số lượng tồn: " + entity.getSoLuongTon());
+            System.out.println("- Trạng thái: " + entity.getTrangThai());
+            System.out.println("- Đã xóa: " + entity.getDaXoa());
+            System.out.println("- Sản phẩm: " + (entity.getSanPham() != null ? entity.getSanPham().getTenSanPham() : "null"));
+            
+            boolean hasEnoughStock = entity.getSoLuongTon() >= quantityNeeded && entity.getDaXoa() == 0;
+            System.out.println("Kết quả kiểm tra: " + hasEnoughStock);
+            
+            return hasEnoughStock;
+        } catch (Exception e) {
+            System.err.println("Lỗi khi kiểm tra số lượng tồn kho: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    @Override
+    public Map<String, Object> getInventoryInfo(Integer chiTietSanPhamId) {
+        return null;
+    }
+
+    @Override
+    public List<ChiTietSanPham> findByMaCode(String maCode) {
+        return null;
+    }
+
+    /**
+     * Đồng bộ trạng thái sản phẩm với bảng SanPham dựa trên tồn kho của ChiTietSanPham
+     * @param sanPhamId ID của sản phẩm
+     */
+    private void syncProductStatus(Integer sanPhamId) {
+        try {
+            // Lấy tất cả chi tiết sản phẩm của sản phẩm này (chưa bị xóa)
+            List<ChiTietSanPham> chiTietList = chiTietSanPhamRepository.findBySanPhamId(sanPhamId);
+            
+            // Tính tổng tồn kho của tất cả chi tiết sản phẩm
+            int totalStock = chiTietList.stream()
+                    .filter(ct -> ct.getDaXoa() == 0) // Chỉ tính những chi tiết chưa bị xóa
+                    .mapToInt(ChiTietSanPham::getSoLuongTon)
+                    .sum();
+            
+            // Cập nhật trạng thái sản phẩm: có tồn kho = còn hàng, không có tồn kho = hết hàng
+            Optional<SanPham> sanPhamOptional = sanPhamRepository.findById(sanPhamId);
+            if (sanPhamOptional.isPresent()) {
+                SanPham sanPham = sanPhamOptional.get();
+                sanPham.setTrangThai(totalStock > 0 ? 1 : 0);
+                sanPham.setNgayCapNhat(LocalDate.now());
+                sanPham.setNguoiCapNhat("SYSTEM_SYNC");
+                
+                sanPhamRepository.save(sanPham);
+                System.out.println("Đã đồng bộ trạng thái sản phẩm ID " + sanPhamId + ": tồn kho = " + totalStock + ", trạng thái = " + (totalStock > 0 ? "Còn hàng" : "Hết hàng"));
+            }
+        } catch (Exception e) {
+            System.err.println("Lỗi khi đồng bộ trạng thái sản phẩm ID " + sanPhamId + ": " + e.getMessage());
+        }
     }
 
 }

@@ -50,6 +50,9 @@ public class BanHangTaiQuayDTO {
         @NotNull(message = "ID sản phẩm không được null")
         private Integer sanPhamId;
         
+        // Field để lưu ChiTietSanPhamId sau khi tìm được
+        private Integer chiTietSanPhamId;
+        
         @NotNull(message = "Số lượng không được null")
         @Min(value = 1, message = "Số lượng phải lớn hơn 0")
         private Integer soLuong;
