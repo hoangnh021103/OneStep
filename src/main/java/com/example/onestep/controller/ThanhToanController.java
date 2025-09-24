@@ -231,7 +231,7 @@ public class ThanhToanController {
                     .tienShip(dto.getPhiGiaoHang() != null ? dto.getPhiGiaoHang() : 0f)
                     .tienGiam(0f) // Sẽ tính sau khi áp dụng voucher
                     .tongTien(dto.getTongTien())
-                    .loaiDon(1) // 1: Bán tại quầy
+                    .loaiDon(0) // 0: OFFLINE (Bán tại quầy)
                     .trangThai(2) // 2: Đã xác nhận (cho bán hàng tại quầy)
                     .ghiChu(dto.getGhiChu())
                     .nguoiTao(dto.getNguoiTao() != null ? dto.getNguoiTao() : "Admin")

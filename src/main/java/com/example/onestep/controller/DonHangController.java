@@ -47,7 +47,7 @@ public class DonHangController {
 
     // 4. Cập nhật sản phẩm theo id
     @PutMapping("/update/{id}")
-    public ResponseEntity<DonHangResponse> update(@PathVariable Integer id, @RequestBody @Valid DonHangDTO dto) {
+    public ResponseEntity<?> update(@PathVariable Integer id, @RequestBody @Valid DonHangDTO dto) {
         try {
             System.out.println("=== DEBUG: Cập nhật đơn hàng ID: " + id + " ===");
             System.out.println("Trạng thái mới: " + dto.getTrangThai());
@@ -67,30 +67,36 @@ public class DonHangController {
             System.out.println("Trạng thái mới: " + newStatus);
 
             // Validation: Kiểm tra quy tắc chuyển đổi trạng thái nếu có thay đổi trạng thái
-            if (newStatus != null && !newStatus.equals(currentStatus)) {
-                System.out.println("🔄 Kiểm tra quy tắc chuyển đổi trạng thái...");
-                System.out.println("🔍 So sánh: currentStatus=" + currentStatus + " (" + currentStatus.getClass().getSimpleName() + 
-                                 "), newStatus=" + newStatus + " (" + newStatus.getClass().getSimpleName() + ")");
-                System.out.println("🔍 newStatus.equals(currentStatus): " + newStatus.equals(currentStatus));
-                System.out.println("🔍 newStatus != null: " + (newStatus != null));
-                
-                boolean isValidTransition = isValidStatusTransition(currentStatus, newStatus);
+            // Đảm bảo cả hai đều là Integer để so sánh chính xác
+            Integer effectiveCurrentStatus = currentStatus != null ? currentStatus : 1;
+            Integer effectiveNewStatus = newStatus;
+            
+            System.out.println("🔄 Kiểm tra quy tắc chuyển đổi trạng thái...");
+            System.out.println("🔍 So sánh: currentStatus=" + currentStatus + " (" + (currentStatus != null ? currentStatus.getClass().getSimpleName() : "null") + 
+                             "), newStatus=" + newStatus + " (" + (newStatus != null ? newStatus.getClass().getSimpleName() : "null") + ")");
+            System.out.println("🔍 Effective: currentStatus=" + effectiveCurrentStatus + ", newStatus=" + effectiveNewStatus);
+            System.out.println("🔍 So sánh effective: " + !effectiveCurrentStatus.equals(effectiveNewStatus));
+            
+            if (newStatus != null && !effectiveCurrentStatus.equals(effectiveNewStatus)) {
+                boolean isValidTransition = isValidStatusTransition(effectiveCurrentStatus, effectiveNewStatus);
                 System.out.println("Kết quả validation: " + isValidTransition);
                 
                 if (!isValidTransition) {
-                    System.out.println("❌ Chuyển đổi trạng thái không hợp lệ: " + currentStatus + " -> " + newStatus);
-                    return ResponseEntity.badRequest().body(Map.of(
-                        "success", false,
-                        "message", "Không thể chuyển đổi trạng thái từ " + getStatusName(currentStatus) + " sang " + getStatusName(newStatus) + ". Vui lòng kiểm tra quy tắc chuyển đổi trạng thái.",
-                        "currentStatus", currentStatus,
-                        "newStatus", newStatus
-                    ));
+                    System.out.println("❌ Chuyển đổi trạng thái không hợp lệ: " + effectiveCurrentStatus + " -> " + effectiveNewStatus);
+                    Map<String, Object> errorResponse = new HashMap<>();
+                    errorResponse.put("success", false);
+                    errorResponse.put("message", "Không thể chuyển đổi trạng thái từ " + getStatusName(effectiveCurrentStatus) + " sang " + getStatusName(effectiveNewStatus) + ". Vui lòng kiểm tra quy tắc chuyển đổi trạng thái.");
+                    errorResponse.put("currentStatus", effectiveCurrentStatus);
+                    errorResponse.put("newStatus", effectiveNewStatus);
+                    return ResponseEntity.badRequest().body(errorResponse);
                 }
             } else {
                 System.out.println("🔄 Không có thay đổi trạng thái hoặc newStatus null");
                 System.out.println("🔍 newStatus: " + newStatus);
                 System.out.println("🔍 currentStatus: " + currentStatus);
-                System.out.println("🔍 newStatus.equals(currentStatus): " + (newStatus != null ? newStatus.equals(currentStatus) : "newStatus is null"));
+                System.out.println("🔍 effectiveCurrentStatus: " + effectiveCurrentStatus);
+                System.out.println("🔍 effectiveNewStatus: " + effectiveNewStatus);
+                System.out.println("🔍 So sánh effective: " + effectiveCurrentStatus.equals(effectiveNewStatus));
             }
 
             DonHangResponse updated = donHangService.update(id, dto);
@@ -125,7 +131,7 @@ public class DonHangController {
 
     // 7. Cập nhật trạng thái đơn hàng
     @PutMapping("/update-status/{id}")
-    public ResponseEntity<DonHangResponse> updateStatus(@PathVariable Integer id, @RequestParam Integer trangThai) {
+    public ResponseEntity<?> updateStatus(@PathVariable Integer id, @RequestParam Integer trangThai) {
         try {
             System.out.println("=== DEBUG: Cập nhật trạng thái đơn hàng ID: " + id + " ===");
             System.out.println("Trạng thái mới: " + trangThai);
@@ -143,14 +149,18 @@ public class DonHangController {
             System.out.println("Trạng thái hiện tại: " + currentStatus);
 
             // Validation: Kiểm tra quy tắc chuyển đổi trạng thái
-            if (!isValidStatusTransition(currentStatus, trangThai)) {
-                System.out.println("❌ Chuyển đổi trạng thái không hợp lệ: " + currentStatus + " -> " + trangThai);
-                return ResponseEntity.badRequest().body(Map.of(
-                    "success", false,
-                    "message", "Không thể chuyển đổi trạng thái từ " + getStatusName(currentStatus) + " sang " + getStatusName(trangThai) + ". Vui lòng kiểm tra quy tắc chuyển đổi trạng thái.",
-                    "currentStatus", currentStatus,
-                    "newStatus", trangThai
-                ));
+            // Nếu currentStatus là null, coi như trạng thái ban đầu là "Chờ xác nhận" (1)
+            Integer effectiveCurrentStatus = currentStatus != null ? currentStatus : 1;
+            System.out.println("🔍 Effective current status: " + effectiveCurrentStatus);
+            
+            if (!isValidStatusTransition(effectiveCurrentStatus, trangThai)) {
+                System.out.println("❌ Chuyển đổi trạng thái không hợp lệ: " + effectiveCurrentStatus + " -> " + trangThai);
+                Map<String, Object> errorResponse = new HashMap<>();
+                errorResponse.put("success", false);
+                errorResponse.put("message", "Không thể chuyển đổi trạng thái từ " + getStatusName(effectiveCurrentStatus) + " sang " + getStatusName(trangThai) + ". Vui lòng kiểm tra quy tắc chuyển đổi trạng thái.");
+                errorResponse.put("currentStatus", effectiveCurrentStatus);
+                errorResponse.put("newStatus", trangThai);
+                return ResponseEntity.badRequest().body((Object) errorResponse);
             }
 
             // Tạo DTO với thông tin hiện tại và trạng thái mới

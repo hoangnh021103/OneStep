@@ -122,6 +122,10 @@ public class DonHangServicelmp implements DonHangService {
     private DonHangResponse mapToDonHangResponse(DonHang donHang) {
         DonHangResponse response = modelMapper.map(donHang, DonHangResponse.class);
         
+        // Debug logging cho trangThai
+        System.out.println("🔍 mapToDonHangResponse - Entity trangThai: " + donHang.getTrangThai() + " (" + (donHang.getTrangThai() != null ? donHang.getTrangThai().getClass().getSimpleName() : "null") + ")");
+        System.out.println("🔍 mapToDonHangResponse - Response trangThai: " + response.getTrangThai() + " (" + (response.getTrangThai() != null ? response.getTrangThai().getClass().getSimpleName() : "null") + ")");
+        
         // Nếu có khách hàng được chọn, sử dụng thông tin từ khách hàng
         if (donHang.getKhachHang() != null) {
             response.setHoTen(donHang.getKhachHang().getHoTen());
