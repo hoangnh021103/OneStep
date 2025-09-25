@@ -175,7 +175,11 @@ public class ChiTietSanPhamServiceImp implements ChiTietSanPhamService {
 
     @Override
     public List<ChiTietSanPham> findBySanPhamIdEntity(Integer sanPhamId) {
-        return null;
+        try {
+            return chiTietSanPhamRepository.findBySanPhamId(sanPhamId);
+        } catch (Exception e) {
+            return List.of();
+        }
     }
 
     @Override
@@ -197,7 +201,8 @@ public class ChiTietSanPhamServiceImp implements ChiTietSanPhamService {
             }
 
             ChiTietSanPham entity = optional.get();
-            int currentQuantity = entity.getSoLuongTon();
+            // Null-safe: phòng trường hợp dữ liệu cũ thiếu giá trị
+            int currentQuantity = entity.getSoLuongTon() != null ? entity.getSoLuongTon() : 0;
             
             // Kiểm tra số lượng tồn kho có đủ không
             if (currentQuantity < quantitySold) {
@@ -280,13 +285,20 @@ public class ChiTietSanPhamServiceImp implements ChiTietSanPhamService {
             }
 
             ChiTietSanPham entity = optional.get();
+            // Null-safe đọc dữ liệu
+            Integer rawStock = entity.getSoLuongTon();
+            Integer rawDaXoa = entity.getDaXoa();
+            int stock = rawStock != null ? rawStock : 0;
+            int daXoa = rawDaXoa != null ? rawDaXoa : 0;
+
             System.out.println("Tìm thấy ChiTietSanPham:");
-            System.out.println("- Số lượng tồn: " + entity.getSoLuongTon());
+            System.out.println("- Số lượng tồn: " + stock);
             System.out.println("- Trạng thái: " + entity.getTrangThai());
-            System.out.println("- Đã xóa: " + entity.getDaXoa());
+            System.out.println("- Đã xóa: " + daXoa);
             System.out.println("- Sản phẩm: " + (entity.getSanPham() != null ? entity.getSanPham().getTenSanPham() : "null"));
-            
-            boolean hasEnoughStock = entity.getSoLuongTon() >= quantityNeeded && entity.getDaXoa() == 0;
+
+            // Điều kiện đủ hàng: chưa bị xóa và tồn kho >= số lượng cần
+            boolean hasEnoughStock = daXoa == 0 && stock >= (quantityNeeded != null ? quantityNeeded : 0);
             System.out.println("Kết quả kiểm tra: " + hasEnoughStock);
             
             return hasEnoughStock;

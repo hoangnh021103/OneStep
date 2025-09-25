@@ -140,25 +140,46 @@ public class DonHangOnlineController {
             if (dto.getChiTietDonHang() != null && !dto.getChiTietDonHang().isEmpty()) {
                 System.out.println("🔄 Tạo chi tiết đơn hàng: " + dto.getChiTietDonHang().size() + " sản phẩm");
 
-                // ✅ BƯỚC 1: Kiểm tra tồn kho trước khi tạo đơn hàng
+                // ✅ BƯỚC 1: Kiểm tra tồn kho trước khi tạo đơn hàng (có bước chuẩn hóa ID)
                 for (ChiTietDonHangOnlineDTO chiTiet : dto.getChiTietDonHang()) {
                     if (chiTiet.getChiTietSanPhamId() == null || chiTiet.getChiTietSanPhamId() <= 0) {
                         System.out.println("⚠️ Bỏ qua chi tiết sản phẩm không hợp lệ: " + chiTiet.getChiTietSanPhamId());
                         continue;
                     }
                     
+                    // Chuẩn hóa: nếu client gửi nhầm ID sản phẩm gốc thay vì ID chi tiết
+                    Integer ctId = chiTiet.getChiTietSanPhamId();
+                    boolean hasEnoughStock;
+                    
+                    // Thử kiểm tra trực tiếp trước
+                    System.out.println("🔍 Kiểm tra tồn kho (trực tiếp) cho ID: " + ctId + ", số lượng: " + chiTiet.getSoLuong());
+                    hasEnoughStock = chiTietSanPhamService.checkInventoryQuantity(ctId, chiTiet.getSoLuong());
+                    
+                    // Nếu không đủ, thử coi như đây là mã sản phẩm gốc và map sang chi tiết (nếu có đúng 1 chi tiết)
+                    if (!hasEnoughStock) {
+                        System.out.println("ℹ️ Thử ánh xạ ID " + ctId + " như mã sản phẩm gốc để lấy chi tiết tương ứng");
+                        var list = chiTietSanPhamService.findBySanPhamIdEntity(ctId);
+                        if (list != null && list.size() == 1) {
+                            Integer mappedId = list.get(0).getMaChiTiet();
+                            System.out.println("✅ Ánh xạ thành công sang chi tiết ID: " + mappedId);
+                            chiTiet.setChiTietSanPhamId(mappedId);
+                            ctId = mappedId;
+                            hasEnoughStock = chiTietSanPhamService.checkInventoryQuantity(ctId, chiTiet.getSoLuong());
+                        } else {
+                            System.out.println("❌ Không thể ánh xạ: số chi tiết tìm được = " + (list == null ? 0 : list.size()));
+                        }
+                    }
+
                     // Validate số lượng
                     if (chiTiet.getSoLuong() == null || chiTiet.getSoLuong() <= 0) {
                         chiTiet.setSoLuong(1);
                     }
                     
                     // Kiểm tra tồn kho
-                    System.out.println("🔍 Kiểm tra tồn kho cho sản phẩm ID: " + chiTiet.getChiTietSanPhamId() + ", số lượng: " + chiTiet.getSoLuong());
-                    boolean hasEnoughStock = chiTietSanPhamService.checkInventoryQuantity(
-                        chiTiet.getChiTietSanPhamId(), chiTiet.getSoLuong());
+                    System.out.println("🔍 Kết quả kiểm tra tồn kho cho chi tiết ID: " + ctId + ", số lượng: " + chiTiet.getSoLuong());
                     
                     if (!hasEnoughStock) {
-                        System.out.println("❌ Không đủ tồn kho cho sản phẩm ID: " + chiTiet.getChiTietSanPhamId());
+                        System.out.println("❌ Không đủ tồn kho cho chi tiết ID: " + ctId);
                         return ResponseEntity.badRequest().body(Map.of(
                             "success", false,
                             "message", "Sản phẩm không đủ số lượng tồn kho để đặt hàng"

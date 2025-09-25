@@ -19,6 +19,8 @@ public class ChatLieuDTO {
     @Size(max = 255, message = "Tên chất liệu tối đa 255 ký tự")
     private String ten;
 
+    @NotNull(message = "Trạng thái không được null")
+    @Min(value = 0, message = "Trạng thái không hợp lệ")
     private Integer trangThai;
 
     private LocalDate ngayCapNhat;

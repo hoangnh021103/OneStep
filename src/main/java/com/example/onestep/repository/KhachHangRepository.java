@@ -8,4 +8,8 @@ import java.util.List;
 public interface KhachHangRepository extends JpaRepository<KhachHang, Integer> {
     List<KhachHang> findByHoTenContainingIgnoreCaseOrEmailContainingIgnoreCaseOrSoDienThoaiContaining(
             String hoTen, String email, String soDienThoai);
+
+    boolean existsByEmail(String email);
+
+    boolean existsBySoDienThoai(String soDienThoai);
 }
