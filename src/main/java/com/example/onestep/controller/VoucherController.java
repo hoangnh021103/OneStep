@@ -116,4 +116,16 @@ public class VoucherController {
             ));
         }
     }
+    
+    // 9. Lấy danh sách voucher đang hoạt động
+    @GetMapping("/active")
+    public ResponseEntity<List<VoucherResponse>> getActiveVouchers() {
+        try {
+            List<VoucherResponse> activeVouchers = voucherService.getActiveVouchers();
+            return ResponseEntity.ok(activeVouchers);
+        } catch (Exception e) {
+            System.err.println("Lỗi khi lấy danh sách voucher hoạt động: " + e.getMessage());
+            return ResponseEntity.badRequest().build();
+        }
+    }
 }

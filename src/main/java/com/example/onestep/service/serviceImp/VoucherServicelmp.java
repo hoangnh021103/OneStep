@@ -83,48 +83,24 @@ public class VoucherServicelmp implements VoucherService {
 
     @Override
     public VoucherResponse validateVoucher(String ma) {
-        // Tìm voucher theo mã
-        List<Voucher> vouchers = voucherRepository.findAll().stream()
-                .filter(v -> v.getMa().equalsIgnoreCase(ma))
-                .collect(Collectors.toList());
+        // Sử dụng query mới để tìm voucher đang hoạt động
+        List<Voucher> vouchers = voucherRepository.findActiveVoucherByCode(ma, LocalDate.now());
 
         if (vouchers.isEmpty()) {
-            return null; // Không tìm thấy voucher
+            return null; // Không tìm thấy voucher hoặc voucher không hợp lệ
         }
 
         Voucher voucher = vouchers.get(0);
-        LocalDate now = LocalDate.now();
-
-        // Kiểm tra các điều kiện
-        // 1. Kiểm tra đã xóa
-        if (voucher.getDaXoa() != null && voucher.getDaXoa() == 1) {
-            return null;
-        }
-
-        // 2. Kiểm tra thời gian hiệu lực
-        if (voucher.getNgayBatDau() != null && now.isBefore(voucher.getNgayBatDau())) {
-            return null; // Chưa đến ngày bắt đầu
-        }
-        if (voucher.getNgayKetThuc() != null && now.isAfter(voucher.getNgayKetThuc())) {
-            return null; // Đã hết hạn
-        }
-
-        // 3. Kiểm tra số lượng còn lại
-        if (voucher.getSoLuong() == null || voucher.getSoLuong() <= 0) {
-            return null; // Hết số lượng
-        }
-
-        // Voucher hợp lệ
+        
+        // Voucher hợp lệ (đã được filter bởi query)
         return modelMapper.map(voucher, VoucherResponse.class);
     }
 
     @Override
     public boolean useVoucher(String ma) {
         try {
-            // Tìm voucher theo mã
-            List<Voucher> vouchers = voucherRepository.findAll().stream()
-                    .filter(v -> v.getMa().equalsIgnoreCase(ma))
-                    .collect(Collectors.toList());
+            // Sử dụng query mới để tìm voucher đang hoạt động
+            List<Voucher> vouchers = voucherRepository.findActiveVoucherByCode(ma, LocalDate.now());
 
             if (vouchers.isEmpty()) {
                 return false;
@@ -132,14 +108,8 @@ public class VoucherServicelmp implements VoucherService {
 
             Voucher voucher = vouchers.get(0);
 
-            // Kiểm tra lại điều kiện trước khi sử dụng
-            VoucherResponse validation = validateVoucher(ma);
-            if (validation == null) {
-                return false;
-            }
-
             // Trừ số lượng
-            int currentQuantity = voucher.getSoLuong();
+            int currentQuantity = voucher.getSoLuong() != null ? voucher.getSoLuong() : 0;
             if (currentQuantity > 0) {
                 voucher.setSoLuong(currentQuantity - 1);
                 voucher.setNgayCapNhat(LocalDate.now());
@@ -152,5 +122,13 @@ public class VoucherServicelmp implements VoucherService {
             System.err.println("Lỗi khi sử dụng voucher: " + e.getMessage());
             return false;
         }
+    }
+    
+    @Override
+    public List<VoucherResponse> getActiveVouchers() {
+        List<Voucher> activeVouchers = voucherRepository.findActiveVouchers(LocalDate.now());
+        return activeVouchers.stream()
+                .map(voucher -> modelMapper.map(voucher, VoucherResponse.class))
+                .collect(Collectors.toList());
     }
 }

@@ -30,6 +30,9 @@ public interface ChiTietSanPhamService {
     // Method để cập nhật số lượng tồn kho khi bán hàng
     boolean updateInventoryQuantity(Integer chiTietSanPhamId, Integer quantitySold);
     
+    // Method để khôi phục số lượng tồn kho khi hủy đơn hàng
+    boolean restoreInventoryQuantity(Integer chiTietSanPhamId, Integer quantityToRestore);
+    
     // Method để kiểm tra số lượng tồn kho
     boolean checkInventoryQuantity(Integer chiTietSanPhamId, Integer quantityNeeded);
     

@@ -27,6 +27,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -221,21 +222,36 @@ public class ThanhToanController {
             }
 
             // 2. Tạo đơn hàng
+            // Tính toán tiền giảm thực tế từ DTO
+            Float tienGiam = dto.getTienGiam() != null ? dto.getTienGiam() : 0f;
+            Float phiGiaoHang = dto.getPhiGiaoHang() != null ? dto.getPhiGiaoHang() : 0f;
+            
+            // ✅ SỬA LỖI: Công thức đúng là tongTienGoc = tongTien + tienGiam - phiGiaoHang
+            // Vì tongTien = tongTienGoc - tienGiam + phiGiaoHang
+            Float tongTienGoc = dto.getTongTien() + tienGiam - phiGiaoHang;
+            
+            System.out.println("=== DEBUG: Tính toán thanh toán ===");
+            System.out.println("Tổng tiền cuối (từ frontend): " + dto.getTongTien());
+            System.out.println("Tiền giảm: " + tienGiam);
+            System.out.println("Phí giao hàng: " + phiGiaoHang);
+            System.out.println("Tổng tiền gốc (tính lại): " + tongTienGoc);
+            System.out.println("Kiểm tra: " + tongTienGoc + " - " + tienGiam + " + " + phiGiaoHang + " = " + (tongTienGoc - tienGiam + phiGiaoHang));
+            
             DonHangDTO donHangDTO = DonHangDTO.builder()
                     .khachHangId(dto.getKhachHangId())
                     .hoTen(hoTen)
                     .soDienThoai(soDienThoai)
                     .email(email)
                     .maDon(dto.getMaHoaDon())
-                    .tongTienGoc(dto.getTongTien() - (dto.getPhiGiaoHang() != null ? dto.getPhiGiaoHang() : 0))
+                    .tongTienGoc(tongTienGoc) // Tổng tiền trước khi giảm
                     .tienShip(dto.getPhiGiaoHang() != null ? dto.getPhiGiaoHang() : 0f)
-                    .tienGiam(0f) // Sẽ tính sau khi áp dụng voucher
+                    .tienGiam(tienGiam) // Lưu tiền giảm thực tế từ frontend
                     .tongTien(dto.getTongTien())
                     .loaiDon(0) // 0: OFFLINE (Bán tại quầy)
                     .trangThai(2) // 2: Đã xác nhận (cho bán hàng tại quầy)
                     .ghiChu(dto.getGhiChu())
                     .nguoiTao(dto.getNguoiTao() != null ? dto.getNguoiTao() : "Admin")
-                    .ngayCapNhat(java.time.LocalDate.now())
+                    .ngayCapNhat(java.time.LocalDateTime.now())
                     .ngayXacNhan(java.time.LocalDate.now()) // Ngày xác nhận = ngày tạo cho bán hàng tại quầy
                     .daXoa(0)
                     .build();
@@ -300,6 +316,52 @@ public class ThanhToanController {
                     "success", false,
                     "message", "Lỗi khi tạo đơn hàng: " + e.getMessage()
             ));
+        }
+    }
+    
+    // ✅ ENDPOINT MỚI: Test tính toán tiền giảm
+    @PostMapping("/test-discount-calculation")
+    public ResponseEntity<?> testDiscountCalculation(@RequestBody Map<String, Object> testData) {
+        try {
+            System.out.println("=== TEST DISCOUNT CALCULATION ===");
+            
+            Float tongTien = Float.parseFloat(testData.get("tongTien").toString());
+            Float phiGiaoHang = testData.get("phiGiaoHang") != null ? 
+                Float.parseFloat(testData.get("phiGiaoHang").toString()) : 0f;
+            Float tienGiam = testData.get("tienGiam") != null ? 
+                Float.parseFloat(testData.get("tienGiam").toString()) : 0f;
+            
+            Float tongTienGoc = tongTien + tienGiam - phiGiaoHang;
+            
+            Map<String, Object> result = new HashMap<>();
+            result.put("success", true);
+            result.put("input", testData);
+            result.put("calculated", Map.of(
+                "tongTien", tongTien,
+                "phiGiaoHang", phiGiaoHang,
+                "tienGiam", tienGiam,
+                "tongTienGoc", tongTienGoc,
+                "formula", "tongTienGoc = tongTien + tienGiam - phiGiaoHang",
+                "verification", "tongTien = tongTienGoc - tienGiam + phiGiaoHang = " + (tongTienGoc - tienGiam + phiGiaoHang)
+            ));
+            
+            System.out.println("Input: " + testData);
+            System.out.println("Tổng tiền: " + tongTien);
+            System.out.println("Phí giao hàng: " + phiGiaoHang);
+            System.out.println("Tiền giảm: " + tienGiam);
+            System.out.println("Tổng tiền gốc (calculated): " + tongTienGoc);
+            
+            return ResponseEntity.ok(result);
+            
+        } catch (Exception e) {
+            System.out.println("❌ Lỗi test discount calculation: " + e.getMessage());
+            e.printStackTrace();
+            
+            Map<String, Object> errorResult = new HashMap<>();
+            errorResult.put("success", false);
+            errorResult.put("message", "Lỗi test: " + e.getMessage());
+            
+            return ResponseEntity.badRequest().body(errorResult);
         }
     }
 }

@@ -27,4 +27,6 @@ public interface VoucherService {
     VoucherResponse validateVoucher(String ma);
 
     boolean useVoucher(String ma);
+    
+    List<VoucherResponse> getActiveVouchers();
 }

@@ -2,6 +2,7 @@ package com.example.onestep.dto.response;
 
 import lombok.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -26,10 +27,15 @@ public class DonHangResponse {
     private LocalDate ngayNhan;
     private Integer loaiDon;
     private String ghiChu;
+    private String diaChiGiaoHang;
     private String maDon;
     private Integer trangThai;
-    private LocalDate ngayCapNhat;
+    private LocalDateTime ngayCapNhat;
     private String nguoiTao;
     private String nguoiCapNhat;
     private Integer daXoa;
+    
+    // Thêm thông tin về sản phẩm trong đơn hàng
+    private Integer soLuongSanPham; // Tổng số lượng sản phẩm
+    private Integer soLoaiSanPham;  // Số loại sản phẩm khác nhau
 }

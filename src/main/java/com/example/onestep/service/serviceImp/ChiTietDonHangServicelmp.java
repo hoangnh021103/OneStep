@@ -16,7 +16,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -115,6 +117,98 @@ public class ChiTietDonHangServicelmp implements ChiTietDonHangService {
         return chiTietDonHangRepository.findById(id)
                 .filter(entity -> entity.getDaXoa() == 0) // bỏ qua nếu đã xóa mềm
                 .map(entity -> modelMapper.map(entity, ChiTietDonHangResponse.class));
+    }
+    
+    @Override
+    public List<ChiTietDonHangResponse> getByDonHangId(Integer donHangId) {
+        return chiTietDonHangRepository.findAll().stream()
+                .filter(chiTiet -> chiTiet.getDonHang() != null && 
+                        chiTiet.getDonHang().getId().equals(donHangId) &&
+                        chiTiet.getDaXoa() == 0)
+                .map(entity -> modelMapper.map(entity, ChiTietDonHangResponse.class))
+                .collect(Collectors.toList());
+    }
+    
+    @Override
+    public List<Map<String, Object>> getByDonHangIdWithProductDetails(Integer donHangId) {
+        System.out.println("🔍 Tìm chi tiết đơn hàng cho donHangId: " + donHangId);
+        
+        List<ChiTietDonHang> chiTietList = chiTietDonHangRepository.findByDonHangId(donHangId);
+        System.out.println("📦 Tìm thấy " + chiTietList.size() + " chi tiết đơn hàng");
+        
+        return chiTietList.stream()
+                .map(entity -> {
+                    System.out.println("🔍 Xử lý chi tiết đơn hàng ID: " + entity.getId());
+                    System.out.println("  - Số lượng: " + entity.getSoLuong());
+                    System.out.println("  - Đơn giá: " + entity.getDonGia());
+                    System.out.println("  - Chi tiết sản phẩm: " + (entity.getChiTietSanPham() != null ? "Có" : "Null"));
+                    Map<String, Object> result = new HashMap<>();
+                    
+                    // Thông tin cơ bản của chi tiết đơn hàng
+                    result.put("id", entity.getId());
+                    result.put("donHangId", entity.getDonHang().getId());
+                    result.put("soLuong", entity.getSoLuong());
+                    result.put("donGia", entity.getDonGia());
+                    result.put("tongTien", entity.getTongTien());
+                    result.put("trangThai", entity.getTrangThai());
+                    
+                    // Thông tin chi tiết sản phẩm
+                    if (entity.getChiTietSanPham() != null) {
+                        Map<String, Object> chiTietSanPham = new HashMap<>();
+                        chiTietSanPham.put("maChiTiet", entity.getChiTietSanPham().getMaChiTiet());
+                        chiTietSanPham.put("duongDanAnh", entity.getChiTietSanPham().getDuongDanAnh());
+                        chiTietSanPham.put("giaTien", entity.getChiTietSanPham().getGiaTien());
+                        chiTietSanPham.put("soLuongTon", entity.getChiTietSanPham().getSoLuongTon());
+                        
+                        // Thông tin sản phẩm
+                        if (entity.getChiTietSanPham().getSanPham() != null) {
+                            Map<String, Object> sanPham = new HashMap<>();
+                            sanPham.put("maSanPham", entity.getChiTietSanPham().getSanPham().getMaSanPham());
+                            sanPham.put("tenSanPham", entity.getChiTietSanPham().getSanPham().getTenSanPham());
+                            sanPham.put("maCode", entity.getChiTietSanPham().getSanPham().getMaCode());
+                            sanPham.put("moTa", entity.getChiTietSanPham().getSanPham().getMoTa());
+                            
+                            // Thương hiệu
+                            if (entity.getChiTietSanPham().getSanPham().getThuongHieu() != null) {
+                                Map<String, Object> thuongHieu = new HashMap<>();
+                                thuongHieu.put("id", entity.getChiTietSanPham().getSanPham().getThuongHieu().getId());
+                                thuongHieu.put("ten", entity.getChiTietSanPham().getSanPham().getThuongHieu().getTen());
+                                sanPham.put("thuongHieu", thuongHieu);
+                            }
+                            
+                            // Chất liệu
+                            if (entity.getChiTietSanPham().getSanPham().getChatLieu() != null) {
+                                Map<String, Object> chatLieu = new HashMap<>();
+                                chatLieu.put("id", entity.getChiTietSanPham().getSanPham().getChatLieu().getId());
+                                chatLieu.put("ten", entity.getChiTietSanPham().getSanPham().getChatLieu().getTen());
+                                sanPham.put("chatLieu", chatLieu);
+                            }
+                            
+                            chiTietSanPham.put("sanPham", sanPham);
+                        }
+                        
+                        // Kích cỡ
+                        if (entity.getChiTietSanPham().getKichCo() != null) {
+                            Map<String, Object> kichCo = new HashMap<>();
+                            kichCo.put("id", entity.getChiTietSanPham().getKichCo().getId());
+                            kichCo.put("ten", entity.getChiTietSanPham().getKichCo().getTen());
+                            chiTietSanPham.put("kichCo", kichCo);
+                        }
+                        
+                        // Màu sắc
+                        if (entity.getChiTietSanPham().getMauSac() != null) {
+                            Map<String, Object> mauSac = new HashMap<>();
+                            mauSac.put("id", entity.getChiTietSanPham().getMauSac().getId());
+                            mauSac.put("ten", entity.getChiTietSanPham().getMauSac().getTen());
+                            chiTietSanPham.put("mauSac", mauSac);
+                        }
+                        
+                        result.put("chiTietSanPham", chiTietSanPham);
+                    }
+                    
+                    return result;
+                })
+                .collect(Collectors.toList());
     }
 
 }

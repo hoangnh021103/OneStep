@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public interface ChiTietDonHangService {
@@ -20,4 +21,10 @@ public interface ChiTietDonHangService {
     void delete(Integer id);
 
     Optional<ChiTietDonHangResponse> getById(Integer id);
+    
+    // Lấy chi tiết đơn hàng theo ID đơn hàng
+    List<ChiTietDonHangResponse> getByDonHangId(Integer donHangId);
+    
+    // Lấy chi tiết đơn hàng với đầy đủ thông tin sản phẩm
+    List<Map<String, Object>> getByDonHangIdWithProductDetails(Integer donHangId);
 }

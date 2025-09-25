@@ -15,21 +15,47 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/don-hang")
-@CrossOrigin(origins = {"http://localhost:5173", "http://localhost:5174"})
+@CrossOrigin(origins = {"http://localhost:5173", "http://localhost:5174", "http://localhost:5177"})
 public class DonHangController {
     @Autowired
     private DonHangService donHangService;
 
     @GetMapping("/hien-thi")
     public ResponseEntity<List<DonHangResponse>> getAll() {
-        return ResponseEntity.ok(donHangService.getAll());
+        // Lấy TẤT CẢ đơn hàng (cả ONLINE từ trangchu và OFFLINE từ admin)
+        List<DonHangResponse> allOrders = donHangService.getAll();
+        System.out.println("=== Admin lấy TẤT CẢ đơn hàng ===");
+        System.out.println("Tổng số: " + allOrders.size());
+
+        // Thống kê loại đơn
+        long onlineCount = allOrders.stream()
+            .filter(o -> o.getLoaiDon() != null && o.getLoaiDon() == 1)
+            .count();
+        long offlineCount = allOrders.stream()
+            .filter(o -> o.getLoaiDon() != null && o.getLoaiDon() == 0)
+            .count();
+
+        System.out.println("Đơn ONLINE (từ trangchu): " + onlineCount);
+        System.out.println("Đơn OFFLINE (từ admin): " + offlineCount);
+
+        // Log chi tiết từng đơn hàng để debug
+        allOrders.forEach(order -> {
+            System.out.println("📄 Đơn hàng: " + order.getMaDon() +
+                             " - Loại: " + (order.getLoaiDon() == 1 ? "ONLINE (trangchu)" : "OFFLINE (admin)") +
+                             " - Trạng thái: " + order.getTrangThai() +
+                             " - Tổng tiền: " + order.getTongTien());
+        });
+
+        return ResponseEntity.ok(allOrders);
     }
 
     @GetMapping("/phan-trang")
@@ -62,9 +88,23 @@ public class DonHangController {
             DonHangResponse current = currentOrder.get();
             Integer currentStatus = current.getTrangThai();
             Integer newStatus = dto.getTrangThai();
+            Integer loaiDon = current.getLoaiDon();
             
             System.out.println("Trạng thái hiện tại: " + currentStatus);
             System.out.println("Trạng thái mới: " + newStatus);
+            System.out.println("Loại đơn: " + loaiDon);
+
+            // ✅ VALIDATION MỚI: Ngăn chặn cập nhật trạng thái đơn hàng tại quầy
+            if (loaiDon != null && loaiDon == 0) {
+                System.out.println("🚫 NGĂN CHẶN: Không thể cập nhật đơn hàng tại quầy (loaiDon=0)");
+                Map<String, Object> errorResponse = new HashMap<>();
+                errorResponse.put("success", false);
+                errorResponse.put("message", "Không thể cập nhật đơn hàng tại quầy. Đơn hàng tại quầy luôn có trạng thái 'Hoàn thành' và không thể thay đổi.");
+                errorResponse.put("currentStatus", currentStatus);
+                errorResponse.put("loaiDon", loaiDon);
+                errorResponse.put("reason", "COUNTER_ORDER_IMMUTABLE");
+                return ResponseEntity.badRequest().body(errorResponse);
+            }
 
             // Validation: Kiểm tra quy tắc chuyển đổi trạng thái nếu có thay đổi trạng thái
             // Đảm bảo cả hai đều là Integer để so sánh chính xác
@@ -145,8 +185,22 @@ public class DonHangController {
 
             DonHangResponse current = currentOrder.get();
             Integer currentStatus = current.getTrangThai();
+            Integer loaiDon = current.getLoaiDon();
             
             System.out.println("Trạng thái hiện tại: " + currentStatus);
+            System.out.println("Loại đơn: " + loaiDon);
+
+            // ✅ VALIDATION MỚI: Ngăn chặn cập nhật trạng thái đơn hàng tại quầy
+            if (loaiDon != null && loaiDon == 0) {
+                System.out.println("🚫 NGĂN CHẶN: Không thể cập nhật trạng thái đơn hàng tại quầy (loaiDon=0)");
+                Map<String, Object> errorResponse = new HashMap<>();
+                errorResponse.put("success", false);
+                errorResponse.put("message", "Không thể cập nhật trạng thái đơn hàng tại quầy. Đơn hàng tại quầy luôn có trạng thái 'Hoàn thành' và không thể thay đổi.");
+                errorResponse.put("currentStatus", currentStatus);
+                errorResponse.put("loaiDon", loaiDon);
+                errorResponse.put("reason", "COUNTER_ORDER_IMMUTABLE");
+                return ResponseEntity.badRequest().body((Object) errorResponse);
+            }
 
             // Validation: Kiểm tra quy tắc chuyển đổi trạng thái
             // Nếu currentStatus là null, coi như trạng thái ban đầu là "Chờ xác nhận" (1)
@@ -178,7 +232,7 @@ public class DonHangController {
                     .trangThai(trangThai) // Cập nhật trạng thái mới
                     .ghiChu(current.getGhiChu())
                     .nguoiTao(current.getNguoiTao())
-                    .ngayCapNhat(java.time.LocalDate.now())
+                    .ngayCapNhat(java.time.LocalDateTime.now())
                     .ngayXacNhan(current.getNgayXacNhan())
                     .daXoa(current.getDaXoa())
                     .build();
@@ -299,6 +353,86 @@ public class DonHangController {
             case 5: return "Hoàn thành";
             case 6: return "Đã hủy";
             default: return "Không xác định";
+        }
+    }
+
+    // ✅ ENDPOINT MỚI: Cập nhật tất cả đơn hàng tại quầy về trạng thái "Hoàn thành"
+    @PostMapping("/fix-counter-orders-status")
+    public ResponseEntity<Map<String, Object>> fixCounterOrdersStatus() {
+        try {
+            System.out.println("=== FIX COUNTER ORDERS STATUS ===");
+            
+            // Lấy tất cả đơn hàng tại quầy
+            List<DonHangResponse> allOrders = donHangService.getAll();
+            List<DonHangResponse> counterOrders = allOrders.stream()
+                .filter(order -> order.getLoaiDon() != null && order.getLoaiDon() == 0)
+                .filter(order -> order.getDaXoa() == 0)
+                .collect(Collectors.toList());
+            
+            System.out.println("Tìm thấy " + counterOrders.size() + " đơn hàng tại quầy");
+            
+            int updatedCount = 0;
+            int alreadyCompletedCount = 0;
+            
+            for (DonHangResponse order : counterOrders) {
+                if (order.getTrangThai() != null && order.getTrangThai() != 5) {
+                    // Cập nhật về trạng thái hoàn thành
+                    DonHangDTO updateDto = DonHangDTO.builder()
+                        .khachHangId(order.getKhachHangId())
+                        .hoTen(order.getHoTen())
+                        .soDienThoai(order.getSoDienThoai())
+                        .email(order.getEmail())
+                        .maDon(order.getMaDon())
+                        .tongTienGoc(order.getTongTienGoc())
+                        .tienShip(order.getTienShip())
+                        .tienGiam(order.getTienGiam())
+                        .tongTien(order.getTongTien())
+                        .loaiDon(order.getLoaiDon())
+                        .trangThai(5) // Force về hoàn thành
+                        .ghiChu(order.getGhiChu())
+                        .nguoiTao(order.getNguoiTao())
+                        .nguoiCapNhat("system_auto_fix")
+                        .ngayCapNhat(LocalDateTime.now())
+                        .ngayXacNhan(order.getNgayXacNhan())
+                        .daXoa(order.getDaXoa())
+                        .build();
+                    
+                    DonHangResponse updated = donHangService.update(order.getId(), updateDto);
+                    if (updated != null) {
+                        updatedCount++;
+                        System.out.println("✅ Cập nhật đơn hàng " + order.getMaDon() + " từ trạng thái " + order.getTrangThai() + " về 5 (Hoàn thành)");
+                    }
+                } else {
+                    alreadyCompletedCount++;
+                    System.out.println("ℹ️ Đơn hàng " + order.getMaDon() + " đã có trạng thái hoàn thành");
+                }
+            }
+            
+            Map<String, Object> result = new HashMap<>();
+            result.put("success", true);
+            result.put("message", "Đã cập nhật trạng thái đơn hàng tại quầy thành công");
+            result.put("totalCounterOrders", counterOrders.size());
+            result.put("updatedOrders", updatedCount);
+            result.put("alreadyCompletedOrders", alreadyCompletedCount);
+            result.put("timestamp", LocalDateTime.now());
+            
+            System.out.println("=== KẾT QUẢ FIX ===");
+            System.out.println("Tổng đơn hàng tại quầy: " + counterOrders.size());
+            System.out.println("Đã cập nhật: " + updatedCount);
+            System.out.println("Đã hoàn thành từ trước: " + alreadyCompletedCount);
+            
+            return ResponseEntity.ok(result);
+            
+        } catch (Exception e) {
+            System.out.println("❌ Lỗi khi fix trạng thái đơn hàng tại quầy: " + e.getMessage());
+            e.printStackTrace();
+            
+            Map<String, Object> errorResult = new HashMap<>();
+            errorResult.put("success", false);
+            errorResult.put("message", "Lỗi khi cập nhật trạng thái đơn hàng tại quầy: " + e.getMessage());
+            errorResult.put("timestamp", LocalDateTime.now());
+            
+            return ResponseEntity.badRequest().body(errorResult);
         }
     }
 }

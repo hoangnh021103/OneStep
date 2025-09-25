@@ -31,6 +31,8 @@ public class BanHangTaiQuayDTO {
     @Min(value = 0, message = "Tổng tiền phải lớn hơn 0")
     private Float tongTien;
     
+    private Float tienGiam; // Số tiền giảm giá từ voucher
+    
     private Integer trangThai;
     
     @NotEmpty(message = "Chi tiết đơn hàng không được trống")

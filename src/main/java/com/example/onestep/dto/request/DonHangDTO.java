@@ -4,6 +4,7 @@ import jakarta.validation.constraints.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -46,12 +47,14 @@ public class DonHangDTO {
     private Integer loaiDon;
 
     private String ghiChu;
+    
+    private String diaChiGiaoHang;
 
     private String maDon;
 
     private Integer trangThai;
 
-    private LocalDate ngayCapNhat;
+    private LocalDateTime ngayCapNhat;
 
     private String nguoiTao;
 

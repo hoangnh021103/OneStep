@@ -3,6 +3,7 @@ package com.example.onestep.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "DonHang")
@@ -67,15 +68,18 @@ public class DonHang {
 
     @Column(name = "ghi_chu", length = 1000)
     private String ghiChu;
+    
+    @Column(name = "dia_chi_giao_hang", length = 500)
+    private String diaChiGiaoHang;
 
-    @Column(name = "ma_don", unique = true, length = 10, nullable = false)
+    @Column(name = "ma_don", unique = true, length = 20, nullable = false)
     private String maDon;
 
     @Column(name = "trang_thai")
     private Integer trangThai;
 
     @Column(name = "ngay_cap_nhat")
-    private LocalDate ngayCapNhat;
+    private LocalDateTime ngayCapNhat;
 
     @Column(name = "nguoi_tao")
     private String nguoiTao;

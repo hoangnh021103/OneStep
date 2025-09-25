@@ -23,4 +23,7 @@ public interface DonHangService {
     void delete(Integer id);
 
     Optional<DonHangResponse> getById(Integer id);
+    
+    // Lấy danh sách đơn hàng theo khách hàng và loại đơn
+    List<DonHangResponse> getByKhachHangId(Integer khachHangId, Integer loaiDon);
 }

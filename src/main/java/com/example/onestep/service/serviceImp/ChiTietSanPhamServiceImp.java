@@ -226,6 +226,47 @@ public class ChiTietSanPhamServiceImp implements ChiTietSanPhamService {
     }
 
     @Override
+    public boolean restoreInventoryQuantity(Integer chiTietSanPhamId, Integer quantityToRestore) {
+        try {
+            System.out.println("=== DEBUG: restoreInventoryQuantity ===");
+            System.out.println("ChiTietSanPhamId: " + chiTietSanPhamId);
+            System.out.println("Quantity to restore: " + quantityToRestore);
+            
+            Optional<ChiTietSanPham> optional = chiTietSanPhamRepository.findById(chiTietSanPhamId);
+            if (optional.isEmpty()) {
+                System.err.println("ERROR: Không tìm thấy chi tiết sản phẩm ID: " + chiTietSanPhamId);
+                return false;
+            }
+
+            ChiTietSanPham entity = optional.get();
+            int currentQuantity = entity.getSoLuongTon();
+            
+            System.out.println("Tồn kho hiện tại: " + currentQuantity);
+            
+            // Cộng lại số lượng tồn kho
+            int newQuantity = currentQuantity + quantityToRestore;
+            entity.setSoLuongTon(newQuantity);
+            
+            // Cập nhật trạng thái: nếu trước đó hết hàng thì giờ có hàng trở lại
+            entity.setTrangThai(1); // 1 = còn hàng
+            entity.setNgayCapNhat(LocalDate.now());
+            entity.setNguoiCapNhat("SYSTEM_RESTORE");
+
+            chiTietSanPhamRepository.save(entity);
+            
+            // Đồng bộ trạng thái với bảng SanPham
+            syncProductStatus(entity.getSanPham().getMaSanPham());
+            
+            System.out.println("✅ Đã khôi phục " + quantityToRestore + " sản phẩm. Tồn kho mới: " + newQuantity);
+            return true;
+        } catch (Exception e) {
+            System.err.println("Lỗi khi khôi phục số lượng tồn kho: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    @Override
     public boolean checkInventoryQuantity(Integer chiTietSanPhamId, Integer quantityNeeded) {
         try {
             System.out.println("=== DEBUG: checkInventoryQuantity ===");
